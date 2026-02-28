@@ -46,6 +46,7 @@ export const contractsFields: INodeProperties[] = [
 		type: 'options',
 		required: true,
 		default: 'mainnet',
+		description: 'Available networks depend on the selected blockchain. Invalid pairs will be rejected by the API.',
 		options: [
 			{ name: 'Mainnet', value: 'mainnet' },
 			{ name: 'Testnet', value: 'testnet' },

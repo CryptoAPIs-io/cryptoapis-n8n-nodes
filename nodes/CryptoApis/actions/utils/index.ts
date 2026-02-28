@@ -47,7 +47,7 @@ export const utilsOperations: INodeProperties[] = [
 		options: [
 			{ name: 'Validate Address', value: 'validateAddress', description: 'Validate a UTXO address', action: 'Validate address' },
 			{ name: 'Decode Raw Transaction', value: 'decodeRawTransaction', description: 'Decode a UTXO raw transaction hex', action: 'Decode raw transaction' },
-			{ name: 'Convert Bitcoin Cash Address', value: 'convertBitcoinCashAddress', description: 'Convert between legacy and cash address formats', action: 'Convert Bitcoin Cash address' },
+			{ name: 'Convert Bitcoin Cash Address', value: 'convertBitcoinCashAddress', description: 'Convert between legacy and CashAddr formats (Bitcoin Cash only, regardless of selected blockchain)', action: 'Convert Bitcoin Cash address' },
 			{ name: 'Derive Addresses', value: 'deriveAddresses', description: 'Derive addresses from an extended public key', action: 'Derive addresses' },
 		],
 		default: 'validateAddress',
@@ -167,7 +167,7 @@ export const utilsFields: INodeProperties[] = [
 			{ name: 'P2WPKH (SegWit)', value: 'p2wpkh' },
 		],
 		displayOptions: {
-			show: { resource: ['utils'], operation: ['deriveAddresses'] },
+			show: { resource: ['utils'], blockchainType: ['utxo'], operation: ['deriveAddresses'] },
 		},
 	},
 	{

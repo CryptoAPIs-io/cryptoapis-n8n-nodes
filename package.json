@@ -63,6 +63,9 @@
 		"url": "https://cryptoapis.io"
 	},
 	"license": "MIT",
+	"engines": {
+		"node": ">=18.0.0"
+	},
 	"homepage": "https://cryptoapis.io",
 	"repository": {
 		"type": "git",

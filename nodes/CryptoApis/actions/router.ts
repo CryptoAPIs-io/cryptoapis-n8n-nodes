@@ -13,7 +13,6 @@ import { executeBlockchainEvents } from './blockchainEvents/execute';
 import { executeContracts } from './contracts/execute';
 import { executeUtils } from './utils/execute';
 
-
 export async function router(
 	this: IExecuteFunctions,
 	index: number,
