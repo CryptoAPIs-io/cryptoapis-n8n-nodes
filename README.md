@@ -63,13 +63,40 @@ This node has `usableAsTool: true`, so it can be used directly as a tool by n8n'
 
 For full MCP integration, use n8n's built-in **MCP Client Tool** node with the [Crypto APIs MCP servers](https://github.com/Crypto-APIs/cryptoapis-mcp). Point the MCP Client Tool at your Crypto APIs MCP server endpoint and it will auto-discover all available blockchain tools.
 
-## Supported Blockchains
+## Supported Blockchains & Networks
 
-**EVM**: Ethereum, Ethereum Classic, Binance Smart Chain, Polygon, Tron, Avalanche, Arbitrum, Base, Optimism
+### EVM
 
-**UTXO**: Bitcoin, Bitcoin Cash, Litecoin, Dogecoin, Dash, Zcash
+| Blockchain | Mainnet | Testnet |
+|------------|---------|---------|
+| Ethereum | mainnet | sepolia |
+| Ethereum Classic | mainnet | mordor |
+| Binance Smart Chain | mainnet | testnet |
+| Polygon | mainnet | amoy |
+| Avalanche | mainnet | fuji |
+| Tron | mainnet | nile |
+| Arbitrum | mainnet | — |
+| Base | mainnet | — |
+| Optimism | mainnet | — |
 
-**Other**: XRP (Ripple), Solana, Kaspa
+### UTXO
+
+| Blockchain | Mainnet | Testnet |
+|------------|---------|---------|
+| Bitcoin | mainnet | testnet |
+| Bitcoin Cash | mainnet | testnet |
+| Litecoin | mainnet | testnet |
+| Dogecoin | mainnet | testnet |
+| Dash | mainnet | testnet |
+| Zcash | mainnet | testnet |
+
+### Other
+
+| Blockchain | Mainnet | Testnet |
+|------------|---------|---------|
+| XRP (Ripple) | mainnet | testnet |
+| Solana | mainnet | devnet |
+| Kaspa | mainnet | — |
 
 ## Development
 
