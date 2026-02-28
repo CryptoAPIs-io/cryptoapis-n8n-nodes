@@ -74,10 +74,16 @@ export function getChainIdForNetwork(blockchain: string, network: string): numbe
 	return chainId;
 }
 
+/** Display name overrides for blockchains that need special labels */
+const BLOCKCHAIN_DISPLAY_NAMES: Record<string, string> = {
+	avalanche: 'Avalanche (C-Chain)',
+	'binance-smart-chain': 'Binance Smart Chain (BSC)',
+};
+
 /** Build n8n options list for blockchain dropdown */
 export function blockchainOptions(blockchains: readonly string[]) {
 	return blockchains.map((b) => ({
-		name: b
+		name: BLOCKCHAIN_DISPLAY_NAMES[b] ?? b
 			.split('-')
 			.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
 			.join(' '),
