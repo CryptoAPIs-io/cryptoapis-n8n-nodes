@@ -2,7 +2,7 @@
 
 This is an [n8n](https://n8n.io/) community node for [Crypto APIs](https://cryptoapis.io/). It lets you use Crypto APIs blockchain services directly in your n8n workflows.
 
-Crypto APIs provides unified blockchain APIs for 15+ blockchains including Bitcoin, Ethereum, Polygon, Avalanche, XRP, Solana, and more.
+Crypto APIs provides unified blockchain APIs for 15+ blockchains including Bitcoin, Ethereum, Polygon, Avalanche (C-Chain), XRP, Solana, and more.
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/reference/license/) workflow automation platform.
 
@@ -73,7 +73,7 @@ For full MCP integration, use n8n's built-in **MCP Client Tool** node with the [
 | Ethereum Classic | mainnet | mordor |
 | Binance Smart Chain | mainnet | testnet |
 | Polygon | mainnet | amoy |
-| Avalanche | mainnet | fuji |
+| Avalanche (C-Chain) | mainnet | fuji |
 | Tron | mainnet | nile |
 | Arbitrum | mainnet | sepolia |
 | Base | mainnet | sepolia |
