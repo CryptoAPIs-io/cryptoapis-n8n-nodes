@@ -87,6 +87,7 @@ export const addressHistoryFields: INodeProperties[] = [
 		type: 'options',
 		required: true,
 		default: 'mainnet',
+		description: 'Available networks depend on the selected blockchain. Invalid pairs will be rejected by the API.',
 		options: [
 			{ name: 'Mainnet', value: 'mainnet' },
 			{ name: 'Testnet', value: 'testnet' },
@@ -136,7 +137,7 @@ export const addressHistoryFields: INodeProperties[] = [
 		options: networkOptions(UTXO_NETWORKS),
 		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['utxo'] } },
 	},
-	// Address
+	// Address (not needed for listSyncedAddresses)
 	{
 		displayName: 'Address',
 		name: 'address',
@@ -144,7 +145,10 @@ export const addressHistoryFields: INodeProperties[] = [
 		required: true,
 		default: '',
 		description: 'The blockchain address',
-		displayOptions: { show: { resource: ['addressHistory'] } },
+		displayOptions: {
+			show: { resource: ['addressHistory'] },
+			hide: { operation: ['listSyncedAddresses'] },
+		},
 	},
 	// Pagination
 	{

@@ -38,16 +38,13 @@ export async function cryptoApisRequest(
 		requestOptions.qs = options.qs;
 	}
 
-	if (options.body && Object.keys(options.body).length > 0) {
-		if (options.method === 'POST' || options.method === 'PUT') {
-			requestOptions.body = {
-				data: {
-					item: options.body,
-				},
-			};
-		} else {
-			requestOptions.body = options.body;
-		}
+	if (options.body && Object.keys(options.body).length > 0
+		&& (options.method === 'POST' || options.method === 'PUT')) {
+		requestOptions.body = {
+			data: {
+				item: options.body,
+			},
+		};
 	}
 
 	try {

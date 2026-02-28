@@ -65,7 +65,7 @@ export const marketDataFields: INodeProperties[] = [
 		},
 	},
 
-	// --- Get Asset Details by Symbol ---
+	// --- From/To Symbol (shared by getAssetDetailsBySymbol + getExchangeRateBySymbols) ---
 	{
 		displayName: 'From Symbol',
 		name: 'fromSymbol',
@@ -77,7 +77,7 @@ export const marketDataFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['marketData'],
-				operation: ['getAssetDetailsBySymbol'],
+				operation: ['getAssetDetailsBySymbol', 'getExchangeRateBySymbols'],
 			},
 		},
 	},
@@ -92,39 +92,7 @@ export const marketDataFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['marketData'],
-				operation: ['getAssetDetailsBySymbol'],
-			},
-		},
-	},
-
-	// --- Get Exchange Rate by Symbols ---
-	{
-		displayName: 'From Symbol',
-		name: 'fromSymbol',
-		type: 'string',
-		required: true,
-		default: '',
-		placeholder: 'e.g. BTC',
-		description: 'Source asset symbol',
-		displayOptions: {
-			show: {
-				resource: ['marketData'],
-				operation: ['getExchangeRateBySymbols'],
-			},
-		},
-	},
-	{
-		displayName: 'To Symbol',
-		name: 'toSymbol',
-		type: 'string',
-		required: true,
-		default: '',
-		placeholder: 'e.g. USD',
-		description: 'Target asset symbol',
-		displayOptions: {
-			show: {
-				resource: ['marketData'],
-				operation: ['getExchangeRateBySymbols'],
+				operation: ['getAssetDetailsBySymbol', 'getExchangeRateBySymbols'],
 			},
 		},
 	},

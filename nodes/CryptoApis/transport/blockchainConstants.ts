@@ -110,3 +110,18 @@ export const ALL_BLOCKCHAINS = [
 	...EVM_BLOCKCHAINS,
 	...UTXO_BLOCKCHAINS,
 ] as const;
+
+/**
+ * Validate that a blockchain-network pair is supported.
+ * Throws a user-friendly error if the combination is invalid.
+ */
+export function validateBlockchainNetwork(blockchain: string, network: string): void {
+	const validNetworks = BLOCKCHAIN_NETWORKS[blockchain];
+	if (!validNetworks) return; // unknown blockchain — let API handle it
+	if (!validNetworks.includes(network)) {
+		const formatted = validNetworks.join(', ');
+		throw new Error(
+			`Network "${network}" is not supported for ${blockchain}. Valid networks: ${formatted}`,
+		);
+	}
+}

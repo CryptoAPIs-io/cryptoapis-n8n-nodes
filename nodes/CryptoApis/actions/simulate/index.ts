@@ -1,5 +1,4 @@
 import type { INodeProperties } from 'n8n-workflow';
-import { networkOptions, EVM_NETWORKS } from '../../transport/blockchainConstants';
 
 export const simulateOperations: INodeProperties[] = [
 	{
@@ -9,7 +8,7 @@ export const simulateOperations: INodeProperties[] = [
 		noDataExpression: true,
 		displayOptions: { show: { resource: ['simulate'] } },
 		options: [
-			{ name: 'Simulate Transaction', value: 'simulateTransaction', description: 'Dry-run an EVM transaction to preview its outcome without broadcasting', action: 'Simulate transaction' },
+			{ name: 'Simulate Transaction', value: 'simulateTransaction', description: 'Dry-run an Ethereum transaction to preview its outcome without broadcasting', action: 'Simulate transaction' },
 		],
 		default: 'simulateTransaction',
 	},
@@ -22,7 +21,10 @@ export const simulateFields: INodeProperties[] = [
 		type: 'options',
 		required: true,
 		default: 'mainnet',
-		options: networkOptions(EVM_NETWORKS),
+		options: [
+			{ name: 'Mainnet', value: 'mainnet' },
+			{ name: 'Sepolia', value: 'sepolia' },
+		],
 		displayOptions: { show: { resource: ['simulate'] } },
 	},
 	{

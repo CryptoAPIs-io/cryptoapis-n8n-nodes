@@ -46,7 +46,7 @@ HD wallet management (sync, list, activate, delete), address derivation, balance
 Build unsigned EVM transactions for native coin, ERC-20 token, and ERC-721 NFT transfers.
 
 ### Simulate
-Dry-run EVM transactions to preview outcomes without broadcasting.
+Dry-run Ethereum transactions to preview outcomes without broadcasting.
 
 ### Broadcast
 Broadcast signed transactions to any supported blockchain network.
@@ -59,9 +59,17 @@ Address validation, raw transaction decoding, address derivation from xPub, Bitc
 
 ## AI Agent Integration
 
-This node has `usableAsTool: true`, so it can be used directly as a tool by n8n's AI Agent node.
+### Using as an AI Tool (usableAsTool)
 
-For full MCP integration, use n8n's built-in **MCP Client Tool** node with the [Crypto APIs MCP servers](https://github.com/Crypto-APIs/cryptoapis-mcp). Point the MCP Client Tool at your Crypto APIs MCP server endpoint and it will auto-discover all available blockchain tools.
+The main **Crypto APIs** node has `usableAsTool: true`, so it can be used directly as a tool by n8n's AI Agent node — just connect it to an AI Agent and it will expose its operations as tool calls.
+
+### Crypto APIs Tool Node (MCP)
+
+The **Crypto APIs Tool** node connects to a Crypto APIs MCP server and auto-discovers all available blockchain tools. It supplies them to an AI Agent as LangChain `DynamicStructuredTool` instances.
+
+To configure, set the **MCP URL** in your Crypto APIs credential (defaults to `https://mcp.cryptoapis.io/mcp`). Then add the **Crypto APIs Tool** node to your AI Agent's tool list — no further configuration needed.
+
+You can also use n8n's built-in **MCP Client Tool** node with a [self-hosted Crypto APIs MCP server](https://github.com/Crypto-APIs/cryptoapis-mcp).
 
 ## Supported Blockchains & Networks
 

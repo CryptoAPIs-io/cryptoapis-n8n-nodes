@@ -8,9 +8,11 @@ export async function executeAddressHistory(
 ): Promise<INodeExecutionData[]> {
 	const blockchainType = this.getNodeParameter('blockchainType', index) as string;
 	const operation = this.getNodeParameter('operation', index) as string;
-	const address = this.getNodeParameter('address', index) as string;
 	const blockchain = this.getNodeParameter('blockchain', index) as string;
 	const network = this.getNodeParameter('network', index) as string;
+	const address = operation === 'listSyncedAddresses'
+		? ''
+		: (this.getNodeParameter('address', index) as string);
 
 	// --- Management operations ---
 	if (blockchainType === 'management') {

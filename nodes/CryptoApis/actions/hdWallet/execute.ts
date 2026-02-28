@@ -17,7 +17,9 @@ export async function executeHdWallet(
 ): Promise<INodeExecutionData[]> {
 	const blockchainType = this.getNodeParameter('blockchainType', index) as string;
 	const operation = this.getNodeParameter('operation', index) as string;
-	const extendedPublicKey = this.getNodeParameter('extendedPublicKey', index) as string;
+	const extendedPublicKey = operation === 'listWallets'
+		? ''
+		: (this.getNodeParameter('extendedPublicKey', index) as string);
 
 	// --- Management operations ---
 	if (blockchainType === 'management') {

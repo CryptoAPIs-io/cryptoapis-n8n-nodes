@@ -41,6 +41,7 @@ export const blockchainEventsFields: INodeProperties[] = [
 		type: 'options',
 		required: true,
 		default: 'mainnet',
+		description: 'Available networks depend on the selected blockchain. Invalid pairs will be rejected by the API.',
 		options: [
 			{ name: 'Mainnet', value: 'mainnet' },
 			{ name: 'Testnet', value: 'testnet' },
@@ -119,6 +120,7 @@ export const blockchainEventsFields: INodeProperties[] = [
 		displayName: 'Blockchain',
 		name: 'blockchain',
 		type: 'options',
+		required: true,
 		default: 'bitcoin',
 		options: blockchainOptions(ALL_BLOCKCHAINS),
 		displayOptions: {
@@ -129,7 +131,9 @@ export const blockchainEventsFields: INodeProperties[] = [
 		displayName: 'Network',
 		name: 'network',
 		type: 'options',
+		required: true,
 		default: 'mainnet',
+		description: 'Available networks depend on the selected blockchain. Invalid pairs will be rejected by the API.',
 		options: [
 			{ name: 'Mainnet', value: 'mainnet' },
 			{ name: 'Testnet', value: 'testnet' },
@@ -147,20 +151,37 @@ export const blockchainEventsFields: INodeProperties[] = [
 		displayName: 'Address',
 		name: 'address',
 		type: 'string',
+		required: true,
 		default: '',
-		description: 'Address to monitor (for address-specific events)',
+		description: 'Address to monitor',
 		displayOptions: {
-			show: { resource: ['blockchainEvents'], operation: ['createSubscription'] },
+			show: {
+				resource: ['blockchainEvents'],
+				operation: ['createSubscription'],
+				eventType: [
+					'UNCONFIRMED_COINS_TRANSACTION',
+					'CONFIRMED_COINS_TRANSACTION',
+					'UNCONFIRMED_TOKENS_TRANSACTION',
+					'CONFIRMED_TOKENS_TRANSACTION',
+					'UNCONFIRMED_INTERNAL_TRANSACTION',
+					'CONFIRMED_INTERNAL_TRANSACTION',
+				],
+			},
 		},
 	},
 	{
 		displayName: 'Transaction ID',
 		name: 'transactionId',
 		type: 'string',
+		required: true,
 		default: '',
-		description: 'Transaction ID to monitor (for transaction-specific events)',
+		description: 'Transaction ID to monitor for confirmations',
 		displayOptions: {
-			show: { resource: ['blockchainEvents'], operation: ['createSubscription'] },
+			show: {
+				resource: ['blockchainEvents'],
+				operation: ['createSubscription'],
+				eventType: ['TRANSACTION_CONFIRMATIONS'],
+			},
 		},
 	},
 	// Pagination

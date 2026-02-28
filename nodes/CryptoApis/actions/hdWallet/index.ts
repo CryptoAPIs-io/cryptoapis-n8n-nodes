@@ -110,6 +110,7 @@ export const hdWalletFields: INodeProperties[] = [
 		type: 'options',
 		required: true,
 		default: 'mainnet',
+		description: 'Available networks depend on the selected blockchain. Invalid pairs will be rejected by the API.',
 		options: [
 			{ name: 'Mainnet', value: 'mainnet' },
 			{ name: 'Testnet', value: 'testnet' },
@@ -169,7 +170,7 @@ export const hdWalletFields: INodeProperties[] = [
 		options: networkOptions(XRP_NETWORKS),
 		displayOptions: { show: { resource: ['hdWallet'], blockchainType: ['xrp'] } },
 	},
-	// Extended Public Key
+	// Extended Public Key (not needed for listWallets)
 	{
 		displayName: 'Extended Public Key',
 		name: 'extendedPublicKey',
@@ -177,7 +178,10 @@ export const hdWalletFields: INodeProperties[] = [
 		required: true,
 		default: '',
 		description: 'xPub, yPub, or zPub key of the HD wallet',
-		displayOptions: { show: { resource: ['hdWallet'] } },
+		displayOptions: {
+			show: { resource: ['hdWallet'] },
+			hide: { operation: ['listWallets'] },
+		},
 	},
 	// Prepare Transaction fields (EVM)
 	{

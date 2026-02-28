@@ -12,20 +12,31 @@ export async function executeBlockchainEvents(
 		const eventType = this.getNodeParameter('eventType', index) as string;
 		const callbackUrl = this.getNodeParameter('callbackUrl', index) as string;
 		const callbackSecretKey = this.getNodeParameter('callbackSecretKey', index, '') as string;
-		const blockchain = this.getNodeParameter('blockchain', index, '') as string;
-		const network = this.getNodeParameter('network', index, '') as string;
-		const address = this.getNodeParameter('address', index, '') as string;
-		const transactionId = this.getNodeParameter('transactionId', index, '') as string;
+		const blockchain = this.getNodeParameter('blockchain', index) as string;
+		const network = this.getNodeParameter('network', index) as string;
 
 		const body: IDataObject = {
 			eventType,
 			callbackUrl,
+			blockchain,
+			network,
 		};
 		if (callbackSecretKey) body.callbackSecretKey = callbackSecretKey;
-		if (blockchain) body.blockchain = blockchain;
-		if (network) body.network = network;
-		if (address) body.address = address;
-		if (transactionId) body.transactionId = transactionId;
+
+		// Address-based events
+		const addressEvents = [
+			'UNCONFIRMED_COINS_TRANSACTION', 'CONFIRMED_COINS_TRANSACTION',
+			'UNCONFIRMED_TOKENS_TRANSACTION', 'CONFIRMED_TOKENS_TRANSACTION',
+			'UNCONFIRMED_INTERNAL_TRANSACTION', 'CONFIRMED_INTERNAL_TRANSACTION',
+		];
+		if (addressEvents.includes(eventType)) {
+			body.address = this.getNodeParameter('address', index) as string;
+		}
+
+		// Transaction confirmation events
+		if (eventType === 'TRANSACTION_CONFIRMATIONS') {
+			body.transactionId = this.getNodeParameter('transactionId', index) as string;
+		}
 
 		const response = await cryptoApisRequest.call(this, {
 			method: 'POST',

@@ -127,10 +127,22 @@ class McpHttpClient {
 	}
 
 	async listTools(): Promise<McpToolDefinition[]> {
-		const result = (await this.rpc('tools/list', {})) as
-			| { tools?: McpToolDefinition[] }
-			| undefined;
-		return result?.tools ?? [];
+		const allTools: McpToolDefinition[] = [];
+		let cursor: string | undefined;
+
+		do {
+			const params: Record<string, unknown> = {};
+			if (cursor) params.cursor = cursor;
+
+			const result = (await this.rpc('tools/list', params)) as
+				| { tools?: McpToolDefinition[]; nextCursor?: string }
+				| undefined;
+
+			allTools.push(...(result?.tools ?? []));
+			cursor = result?.nextCursor;
+		} while (cursor);
+
+		return allTools;
 	}
 
 	async callTool(

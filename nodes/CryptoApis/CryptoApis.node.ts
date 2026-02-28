@@ -40,25 +40,6 @@ export class CryptoApis implements INodeType {
 			{
 				name: 'cryptoApisApi',
 				required: true,
-				displayOptions: {
-					show: {
-						resource: [
-							'marketData',
-							'addressLatest',
-							'blockData',
-							'blockchainFees',
-							'transactionsData',
-							'hdWallet',
-							'addressHistory',
-							'prepareTransactions',
-							'simulate',
-							'broadcast',
-							'blockchainEvents',
-							'contracts',
-							'utils',
-						],
-					},
-				},
 			},
 		],
 		properties: [
@@ -79,7 +60,6 @@ export class CryptoApis implements INodeType {
 					{ name: 'Market Data', value: 'marketData' },
 					{ name: 'Prepare Transactions', value: 'prepareTransactions' },
 					{ name: 'Simulate', value: 'simulate' },
-	
 					{ name: 'Transactions Data', value: 'transactionsData' },
 					{ name: 'Utils', value: 'utils' },
 				],
@@ -123,6 +103,9 @@ export class CryptoApis implements INodeType {
 		for (let i = 0; i < items.length; i++) {
 			try {
 				const result = await router.call(this, i);
+				for (const item of result) {
+					item.pairedItem = { item: i };
+				}
 				returnData.push(...result);
 			} catch (error) {
 				if (this.continueOnFail()) {
