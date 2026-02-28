@@ -11,9 +11,9 @@ export const BLOCKCHAIN_NETWORKS: Record<string, readonly string[]> = {
 	polygon: ['mainnet', 'amoy'],
 	tron: ['mainnet', 'nile'],
 	avalanche: ['mainnet', 'fuji'],
-	arbitrum: ['mainnet'],
-	base: ['mainnet'],
-	optimism: ['mainnet'],
+	arbitrum: ['mainnet', 'sepolia'],
+	base: ['mainnet', 'sepolia'],
+	optimism: ['mainnet', 'sepolia'],
 	// UTXO
 	bitcoin: ['mainnet', 'testnet'],
 	'bitcoin-cash': ['mainnet', 'testnet'],
@@ -45,6 +45,7 @@ export const UTXO_BLOCKCHAINS = [
 ] as const;
 
 export const EVM_NETWORKS = ['mainnet', 'sepolia', 'mordor', 'testnet', 'nile', 'amoy', 'fuji'] as const;
+// Note: 'sepolia' is used by ethereum, arbitrum, optimism, and base
 export const UTXO_NETWORKS = ['mainnet', 'testnet'] as const;
 export const XRP_NETWORKS = ['mainnet', 'testnet'] as const;
 export const SOLANA_NETWORKS = ['mainnet', 'devnet'] as const;
@@ -55,9 +56,9 @@ export const EVM_NETWORK_CHAIN_IDS: Record<string, Record<string, number>> = {
 	'binance-smart-chain': { mainnet: 56, testnet: 97 },
 	polygon: { mainnet: 137, amoy: 80002 },
 	avalanche: { mainnet: 43114, fuji: 43113 },
-	arbitrum: { mainnet: 42161 },
-	base: { mainnet: 8453 },
-	optimism: { mainnet: 10 },
+	arbitrum: { mainnet: 42161, sepolia: 421614 },
+	base: { mainnet: 8453, sepolia: 84532 },
+	optimism: { mainnet: 10, sepolia: 11155420 },
 	tron: { mainnet: 728126428, nile: 201910292 },
 };
 

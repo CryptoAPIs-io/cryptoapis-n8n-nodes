@@ -75,9 +75,9 @@ For full MCP integration, use n8n's built-in **MCP Client Tool** node with the [
 | Polygon | mainnet | amoy |
 | Avalanche | mainnet | fuji |
 | Tron | mainnet | nile |
-| Arbitrum | mainnet | — |
-| Base | mainnet | — |
-| Optimism | mainnet | — |
+| Arbitrum | mainnet | sepolia |
+| Base | mainnet | sepolia |
+| Optimism | mainnet | sepolia |
 
 ### UTXO
 
