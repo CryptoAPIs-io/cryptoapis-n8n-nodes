@@ -261,7 +261,7 @@ export class CryptoApisTool implements INodeType {
 		const credentials = await this.getCredentials('cryptoApisApi');
 		const apiKey = credentials.apiKey as string;
 		const mcpUrl =
-			(credentials.mcpUrl as string) || 'https://mcp.cryptoapis.io/mcp';
+			(credentials.mcpUrl as string) || 'https://ai.cryptoapis.io/mcp';
 
 		// 1. Connect to MCP server
 		const client = new McpHttpClient(mcpUrl, apiKey);
