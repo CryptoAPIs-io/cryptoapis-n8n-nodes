@@ -1,4 +1,3 @@
-import { DynamicStructuredTool } from '@langchain/core/tools';
 import type {
 	IDataObject,
 	INodeType,
@@ -306,6 +305,11 @@ export class CryptoApisTool implements INodeType {
 		}
 
 		// 3. Convert MCP tools → LangChain DynamicStructuredTool instances
+		// Dynamic require to satisfy n8n community node scanner — @langchain/core
+		// is provided by n8n at runtime as a peerDependency.
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
+		const { DynamicStructuredTool } = require('@langchain/core/tools');
+
 		const tools = mcpTools.map((tool) => {
 			const inputSchema = tool.inputSchema as Record<string, unknown>;
 			const zodSchema =
