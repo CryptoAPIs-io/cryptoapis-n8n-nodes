@@ -1,6 +1,6 @@
 {
 	"name": "@cryptoapis-io/n8n-nodes-cryptoapis",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "n8n community node for Crypto APIs — blockchain infrastructure for 15+ protocols",
 	"keywords": [
 		"n8n-community-node-package",
