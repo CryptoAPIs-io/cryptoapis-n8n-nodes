@@ -28,7 +28,7 @@ export const broadcastOperations: INodeProperties[] = [
 		noDataExpression: true,
 		displayOptions: { show: { resource: ['broadcast'] } },
 		options: [
-			{ name: 'Broadcast Signed Transaction', value: 'broadcastSignedTransaction', description: 'Broadcast a signed transaction to the blockchain network', action: 'Broadcast signed transaction' },
+			{ name: 'Broadcast Signed Transaction', value: 'broadcastSignedTransaction', description: 'Broadcast a signed transaction to the blockchain network', action: 'Broadcast a signed transaction to the network' },
 		],
 		default: 'broadcastSignedTransaction',
 	},

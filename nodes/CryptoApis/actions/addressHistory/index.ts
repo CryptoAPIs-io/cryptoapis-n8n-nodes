@@ -23,50 +23,25 @@ export const addressHistoryOperations: INodeProperties[] = [
 		],
 		default: 'management',
 	},
-	// Management operations
 	{
 		displayName: 'Operation',
 		name: 'operation',
 		type: 'options',
 		noDataExpression: true,
-		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['management'] } },
+		displayOptions: { show: { resource: ['addressHistory'] } },
 		options: [
-			{ name: 'Sync Address', value: 'syncAddress', description: 'Sync an address for full history tracking', action: 'Sync address' },
-			{ name: 'List Synced Addresses', value: 'listSyncedAddresses', description: 'List all synced addresses', action: 'List synced addresses' },
-			{ name: 'Activate Address', value: 'activateAddress', description: 'Activate a previously deactivated address sync', action: 'Activate address' },
-			{ name: 'Delete Address', value: 'deleteAddress', description: 'Delete an address sync', action: 'Delete address' },
+			{ name: 'Sync Address', value: 'syncAddress', description: 'Sync an address for full history tracking (Management)', action: 'Sync address for history tracking' },
+			{ name: 'List Synced Addresses', value: 'listSyncedAddresses', description: 'List all synced addresses (Management)', action: 'List all synced addresses' },
+			{ name: 'Activate Address', value: 'activateAddress', description: 'Activate a previously deactivated address sync (Management)', action: 'Activate an address sync' },
+			{ name: 'Delete Address', value: 'deleteAddress', description: 'Delete an address sync (Management)', action: 'Delete an address sync' },
+			{ name: 'Get Statistics', value: 'getStatistics', description: 'Get address statistics (EVM: ETH/ETC, UTXO: BTC/BCH)', action: 'Get address history statistics' },
+			{ name: 'List Transactions', value: 'listTransactions', description: 'List full transaction history for an address (EVM/UTXO)', action: 'List full transaction history for an address' },
+			{ name: 'List Token Transfers', value: 'listTokenTransfers', description: 'List full token transfer history (EVM only)', action: 'List full token transfer history' },
+			{ name: 'List Internal Transactions', value: 'listInternalTransactions', description: 'List full internal transaction history (EVM only)', action: 'List full internal transaction history' },
+			{ name: 'List Tokens', value: 'listTokens', description: 'List all tokens held by address (EVM only)', action: 'List all tokens held by an address' },
+			{ name: 'List Unspent Outputs', value: 'listUnspentOutputs', description: 'List unspent transaction outputs — UTXOs (UTXO only)', action: 'List unspent transaction outputs (UTXOs)' },
 		],
 		default: 'syncAddress',
-	},
-	// EVM operations
-	{
-		displayName: 'Operation',
-		name: 'operation',
-		type: 'options',
-		noDataExpression: true,
-		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['evm'] } },
-		options: [
-			{ name: 'Get Statistics', value: 'getStatistics', description: 'Get address statistics (ETH/ETC only)', action: 'Get statistics' },
-			{ name: 'List Transactions', value: 'listTransactions', description: 'List full transaction history for an address', action: 'List transactions' },
-			{ name: 'List Token Transfers', value: 'listTokenTransfers', description: 'List full token transfer history', action: 'List token transfers' },
-			{ name: 'List Internal Transactions', value: 'listInternalTransactions', description: 'List full internal transaction history', action: 'List internal transactions' },
-			{ name: 'List Tokens', value: 'listTokens', description: 'List all tokens held by address', action: 'List tokens' },
-		],
-		default: 'listTransactions',
-	},
-	// UTXO operations
-	{
-		displayName: 'Operation',
-		name: 'operation',
-		type: 'options',
-		noDataExpression: true,
-		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['utxo'] } },
-		options: [
-			{ name: 'Get Statistics', value: 'getStatistics', description: 'Get address statistics (BTC/BCH only)', action: 'Get statistics' },
-			{ name: 'List Transactions', value: 'listTransactions', description: 'List full transaction history', action: 'List transactions' },
-			{ name: 'List Unspent Outputs', value: 'listUnspentOutputs', description: 'List unspent transaction outputs (UTXOs)', action: 'List unspent outputs' },
-		],
-		default: 'listTransactions',
 	},
 ];
 
