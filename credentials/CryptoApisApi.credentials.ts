@@ -27,13 +27,6 @@ export class CryptoApisApi implements ICredentialType {
 			default: 'https://rest.cryptoapis.io',
 			description: 'Base URL for the Crypto APIs REST API. Override this if you have a custom setup.',
 		},
-		{
-			displayName: 'MCP URL',
-			name: 'mcpUrl',
-			type: 'string',
-			default: 'https://ai.cryptoapis.io/mcp',
-			description: 'URL of the Crypto APIs MCP server endpoint. Used by the Crypto APIs Tool node for AI agent integration.',
-		},
 	];
 
 	authenticate: IAuthenticateGeneric = {
