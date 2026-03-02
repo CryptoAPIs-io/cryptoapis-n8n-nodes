@@ -8,6 +8,7 @@ import type {
 export class CryptoApisApi implements ICredentialType {
 	name = 'cryptoApisApi';
 	displayName = 'Crypto APIs API';
+	icon = 'file:cryptoapis.svg' as const;
 	documentationUrl = 'https://developers.cryptoapis.io/technical-documentation/general-information/authentication';
 
 	properties: INodeProperties[] = [

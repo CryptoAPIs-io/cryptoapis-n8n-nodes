@@ -23,44 +23,19 @@ export const blockchainFeesOperations: INodeProperties[] = [
 		],
 		default: 'evm',
 	},
-	// EVM operations
 	{
 		displayName: 'Operation',
 		name: 'operation',
 		type: 'options',
 		noDataExpression: true,
-		displayOptions: { show: { resource: ['blockchainFees'], blockchainType: ['evm'] } },
+		displayOptions: { show: { resource: ['blockchainFees'] } },
 		options: [
-			{ name: 'Get Fee Recommendations', value: 'getFeeRecommendations', description: 'Get mempool fee recommendations', action: 'Get fee recommendations' },
-			{ name: 'Get EIP-1559 Fee Recommendations', value: 'getEip1559FeeRecommendations', description: 'Get EIP-1559 fee recommendations (base fee + priority fee)', action: 'Get EIP-1559 fee recommendations' },
-			{ name: 'Estimate Native Coin Transfer Gas', value: 'estimateNativeCoinTransferGas', description: 'Estimate gas for a native coin transfer', action: 'Estimate native coin transfer gas' },
-			{ name: 'Estimate Token Transfer Gas', value: 'estimateTokenTransferGas', description: 'Estimate gas for a token transfer (ERC-20/ERC-721)', action: 'Estimate token transfer gas' },
-			{ name: 'Estimate Contract Interaction Gas', value: 'estimateContractInteractionGas', description: 'Estimate gas for a contract interaction using calldata', action: 'Estimate contract interaction gas' },
-		],
-		default: 'getFeeRecommendations',
-	},
-	// UTXO operations
-	{
-		displayName: 'Operation',
-		name: 'operation',
-		type: 'options',
-		noDataExpression: true,
-		displayOptions: { show: { resource: ['blockchainFees'], blockchainType: ['utxo'] } },
-		options: [
-			{ name: 'Get Fee Recommendations', value: 'getFeeRecommendations', description: 'Get mempool fee recommendations', action: 'Get fee recommendations' },
-			{ name: 'Estimate Transaction Smart Fee', value: 'estimateTransactionSmartFee', description: 'Estimate smart fee for a UTXO transaction with confirmation target', action: 'Estimate transaction smart fee' },
-		],
-		default: 'getFeeRecommendations',
-	},
-	// XRP operations
-	{
-		displayName: 'Operation',
-		name: 'operation',
-		type: 'options',
-		noDataExpression: true,
-		displayOptions: { show: { resource: ['blockchainFees'], blockchainType: ['xrp'] } },
-		options: [
-			{ name: 'Get Fee Recommendations', value: 'getFeeRecommendations', description: 'Get mempool fee recommendations for XRP', action: 'Get fee recommendations' },
+			{ name: 'Get Fee Recommendations', value: 'getFeeRecommendations', description: 'Get mempool fee recommendations (all blockchain types)', action: 'Get mempool fee recommendations' },
+			{ name: 'Get EIP-1559 Fee Recommendations', value: 'getEip1559FeeRecommendations', description: 'Get EIP-1559 fee recommendations — base fee + priority fee (EVM only)', action: 'Get EIP-1559 fee recommendations (base + priority fee)' },
+			{ name: 'Estimate Native Coin Transfer Gas', value: 'estimateNativeCoinTransferGas', description: 'Estimate gas for a native coin transfer (EVM only)', action: 'Estimate gas for a native coin transfer' },
+			{ name: 'Estimate Token Transfer Gas', value: 'estimateTokenTransferGas', description: 'Estimate gas for a token transfer — ERC-20/ERC-721 (EVM only)', action: 'Estimate gas for a token transfer (ERC-20/ERC-721)' },
+			{ name: 'Estimate Contract Interaction Gas', value: 'estimateContractInteractionGas', description: 'Estimate gas for a contract interaction using calldata (EVM only)', action: 'Estimate gas for a contract interaction' },
+			{ name: 'Estimate Transaction Smart Fee', value: 'estimateTransactionSmartFee', description: 'Estimate smart fee for a UTXO transaction with confirmation target (UTXO only)', action: 'Estimate smart fee for a UTXO transaction' },
 		],
 		default: 'getFeeRecommendations',
 	},

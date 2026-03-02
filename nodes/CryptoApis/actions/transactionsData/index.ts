@@ -26,43 +26,18 @@ export const transactionsDataOperations: INodeProperties[] = [
 		],
 		default: 'evm',
 	},
-	// EVM operations
 	{
 		displayName: 'Operation',
 		name: 'operation',
 		type: 'options',
 		noDataExpression: true,
-		displayOptions: { show: { resource: ['transactionsData'], blockchainType: ['evm'] } },
+		displayOptions: { show: { resource: ['transactionsData'] } },
 		options: [
-			{ name: 'Get Transaction Details', value: 'getTransactionDetails', description: 'Get detailed information about a specific transaction', action: 'Get transaction details' },
-			{ name: 'List Internal Transactions', value: 'listInternalTransactions', description: 'List internal transactions of an EVM transaction', action: 'List internal transactions' },
-			{ name: 'List Token Transfers', value: 'listTokenTransfers', description: 'List token transfers of an EVM transaction', action: 'List token transfers' },
-			{ name: 'List Logs', value: 'listLogs', description: 'List event logs of an EVM transaction', action: 'List logs' },
-		],
-		default: 'getTransactionDetails',
-	},
-	// UTXO operations
-	{
-		displayName: 'Operation',
-		name: 'operation',
-		type: 'options',
-		noDataExpression: true,
-		displayOptions: { show: { resource: ['transactionsData'], blockchainType: ['utxo'] } },
-		options: [
-			{ name: 'Get Transaction Details', value: 'getTransactionDetails', description: 'Get detailed information about a UTXO transaction', action: 'Get transaction details' },
-			{ name: 'Get Raw Transaction Data', value: 'getRawTransactionData', description: 'Get raw hex of a UTXO transaction', action: 'Get raw transaction data' },
-		],
-		default: 'getTransactionDetails',
-	},
-	// Solana/XRP/Kaspa operations
-	{
-		displayName: 'Operation',
-		name: 'operation',
-		type: 'options',
-		noDataExpression: true,
-		displayOptions: { show: { resource: ['transactionsData'], blockchainType: ['solana', 'xrp', 'kaspa'] } },
-		options: [
-			{ name: 'Get Transaction Details', value: 'getTransactionDetails', description: 'Get detailed information about a transaction', action: 'Get transaction details' },
+			{ name: 'Get Transaction Details', value: 'getTransactionDetails', description: 'Get detailed information about a specific transaction (all blockchain types)', action: 'Get details of a specific transaction' },
+			{ name: 'List Internal Transactions', value: 'listInternalTransactions', description: 'List internal transactions of an EVM transaction (EVM only)', action: 'List internal transactions of a transaction' },
+			{ name: 'List Token Transfers', value: 'listTokenTransfers', description: 'List token transfers of an EVM transaction (EVM only)', action: 'List token transfers of a transaction' },
+			{ name: 'List Logs', value: 'listLogs', description: 'List event logs of an EVM transaction (EVM only)', action: 'List event logs of a transaction' },
+			{ name: 'Get Raw Transaction Data', value: 'getRawTransactionData', description: 'Get raw hex of a UTXO transaction (UTXO only)', action: 'Get raw hex of a UTXO transaction' },
 		],
 		default: 'getTransactionDetails',
 	},

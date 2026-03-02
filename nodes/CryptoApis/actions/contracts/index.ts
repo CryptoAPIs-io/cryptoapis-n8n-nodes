@@ -23,7 +23,7 @@ export const contractsOperations: INodeProperties[] = [
 		noDataExpression: true,
 		displayOptions: { show: { resource: ['contracts'] } },
 		options: [
-			{ name: 'Get Token Details by Contract', value: 'getTokenDetailsByContract', description: 'Get token details (name, symbol, decimals, total supply) by contract address', action: 'Get token details by contract' },
+			{ name: 'Get Token Details by Contract', value: 'getTokenDetailsByContract', description: 'Get token details (name, symbol, decimals, total supply) by contract address', action: 'Get token name, symbol, and supply by contract address' },
 		],
 		default: 'getTokenDetailsByContract',
 	},

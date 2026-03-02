@@ -8,7 +8,7 @@ export const simulateOperations: INodeProperties[] = [
 		noDataExpression: true,
 		displayOptions: { show: { resource: ['simulate'] } },
 		options: [
-			{ name: 'Simulate Transaction', value: 'simulateTransaction', description: 'Dry-run an Ethereum transaction to preview its outcome without broadcasting', action: 'Simulate transaction' },
+			{ name: 'Simulate Transaction', value: 'simulateTransaction', description: 'Dry-run an Ethereum transaction to preview its outcome without broadcasting', action: 'Dry-run an Ethereum transaction without broadcasting' },
 		],
 		default: 'simulateTransaction',
 	},

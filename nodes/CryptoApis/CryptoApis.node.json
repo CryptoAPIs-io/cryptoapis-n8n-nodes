@@ -2,7 +2,7 @@
 	"node": "@cryptoapis-io/n8n-nodes-cryptoapis.cryptoApis",
 	"nodeVersion": "1.0",
 	"codexVersion": "1.0",
-	"categories": ["Development"],
+	"categories": ["Development", "Core Nodes"],
 	"resources": {
 		"primaryDocumentation": [
 			{
@@ -91,6 +91,7 @@
 		"new block"
 	],
 	"subcategories": {
+		"Core Nodes": ["Other Core Nodes"],
 		"Development": ["Blockchain Infrastructure"]
 	}
 }
