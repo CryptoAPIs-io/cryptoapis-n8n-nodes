@@ -63,13 +63,9 @@ Address validation, raw transaction decoding, address derivation from xPub, Bitc
 
 The main **Crypto APIs** node has `usableAsTool: true`, so it can be used directly as a tool by n8n's AI Agent node — just connect it to an AI Agent and it will expose its operations as tool calls.
 
-### Crypto APIs Tool Node (MCP)
+### MCP Client Tool
 
-The **Crypto APIs Tool** node connects to a Crypto APIs MCP server and auto-discovers all available blockchain tools. It supplies them to an AI Agent as LangChain `DynamicStructuredTool` instances.
-
-To configure, set the **MCP URL** in your Crypto APIs credential (defaults to `https://ai.cryptoapis.io/mcp`). Then add the **Crypto APIs Tool** node to your AI Agent's tool list — no further configuration needed.
-
-You can also use n8n's built-in **MCP Client Tool** node with a [self-hosted Crypto APIs MCP server](https://github.com/CryptoAPIs-io/cryptoapis-mcp-hub).
+You can also use n8n's built-in **MCP Client Tool** node to connect to the hosted Crypto APIs MCP server at `https://ai.cryptoapis.io/mcp` or a [self-hosted instance](https://github.com/CryptoAPIs-io/cryptoapis-mcp-hub). This gives AI agents access to 50+ blockchain tools via MCP.
 
 ## Supported Blockchains & Networks
 
