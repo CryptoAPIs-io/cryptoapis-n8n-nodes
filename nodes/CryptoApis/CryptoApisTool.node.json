@@ -1,0 +1,31 @@
+{
+	"node": "@cryptoapis-io/n8n-nodes-cryptoapis.cryptoApisTool",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["AI"],
+	"resources": {
+		"primaryDocumentation": [
+			{
+				"url": "https://developers.cryptoapis.io/technical-documentation/general-information/overview"
+			}
+		],
+		"credentialDocumentation": [
+			{
+				"url": "https://developers.cryptoapis.io/technical-documentation/general-information/authentication"
+			}
+		]
+	},
+	"alias": [
+		"blockchain",
+		"crypto",
+		"web3",
+		"bitcoin",
+		"ethereum",
+		"mcp",
+		"ai tool",
+		"agent tool"
+	],
+	"subcategories": {
+		"AI": ["Tools"]
+	}
+}
