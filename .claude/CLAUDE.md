@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-An [n8n](https://n8n.io/) community node package (`@cryptoapis/n8n-nodes-cryptoapis`) that integrates [Crypto APIs](https://cryptoapis.io/) blockchain services into n8n workflows. It provides two node types:
+An [n8n](https://n8n.io/) community node package (`@cryptoapis-io/n8n-nodes-cryptoapis`) that integrates [Crypto APIs](https://cryptoapis.io/) blockchain services into n8n workflows. It provides two node types:
 
 1. **CryptoApis** — A regular workflow node with 13 resources covering blockchain data, transactions, market data, HD wallets, contracts, events, fees, broadcast, simulation, address history, and utilities. Has `usableAsTool: true` so AI Agent nodes can use it directly.
 2. **CryptoApisTool** — An AI Agent tool sub-node that connects to a CryptoAPIs MCP server, discovers all available tools, and exposes them as LangChain `DynamicStructuredTool` instances.
@@ -100,7 +100,7 @@ API version `2024-12-12` is sent as `x-api-version` header on all requests.
 
 | Element | Case | Example |
 |---------|------|---------|
-| Package name | `@<scope>/n8n-nodes-<name>` | `@cryptoapis/n8n-nodes-cryptoapis` |
+| Package name | `@<scope>/n8n-nodes-<name>` | `@cryptoapis-io/n8n-nodes-cryptoapis` |
 | Node class | PascalCase | `CryptoApis`, `CryptoApisTool` |
 | Node `name` | camelCase | `cryptoApis`, `cryptoApisTool` |
 | Resource values | camelCase | `marketData`, `addressLatest` |

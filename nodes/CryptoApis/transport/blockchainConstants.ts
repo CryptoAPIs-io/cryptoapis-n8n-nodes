@@ -1,6 +1,6 @@
 /**
  * Blockchain → network mapping for CryptoAPIs.
- * Ported from @cryptoapis/mcp-shared.
+ * Ported from @cryptoapis-io/mcp-shared.
  */
 
 export const BLOCKCHAIN_NETWORKS: Record<string, readonly string[]> = {

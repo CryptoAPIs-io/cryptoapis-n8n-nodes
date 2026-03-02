@@ -1,5 +1,5 @@
 {
-	"name": "@cryptoapis/n8n-nodes-cryptoapis",
+	"name": "@cryptoapis-io/n8n-nodes-cryptoapis",
 	"version": "0.1.0",
 	"description": "n8n community node for Crypto APIs — blockchain infrastructure for 15+ protocols",
 	"keywords": [
@@ -69,7 +69,7 @@
 	"homepage": "https://cryptoapis.io",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Crypto-APIs/cryptoapis-n8n-nodes.git"
+		"url": "https://github.com/CryptoAPIs-io/cryptoapis-n8n-nodes.git"
 	},
 	"main": "dist/nodes/CryptoApis/CryptoApis.node.js",
 	"scripts": {

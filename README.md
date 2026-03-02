@@ -69,7 +69,7 @@ The **Crypto APIs Tool** node connects to a Crypto APIs MCP server and auto-disc
 
 To configure, set the **MCP URL** in your Crypto APIs credential (defaults to `https://ai.cryptoapis.io/mcp`). Then add the **Crypto APIs Tool** node to your AI Agent's tool list — no further configuration needed.
 
-You can also use n8n's built-in **MCP Client Tool** node with a [self-hosted Crypto APIs MCP server](https://github.com/Crypto-APIs/cryptoapis-mcp).
+You can also use n8n's built-in **MCP Client Tool** node with a [self-hosted Crypto APIs MCP server](https://github.com/CryptoAPIs-io/cryptoapis-mcp-hub).
 
 ## Supported Blockchains & Networks
 
