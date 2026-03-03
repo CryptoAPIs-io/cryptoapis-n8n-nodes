@@ -1,6 +1,6 @@
 {
 	"name": "@cryptoapis-io/n8n-nodes-cryptoapis",
-	"version": "0.1.5",
+	"version": "0.1.6",
 	"description": "n8n community node for Crypto APIs — blockchain infrastructure for 15+ protocols",
 	"keywords": [
 		"n8n-community-node-package",
@@ -60,6 +60,7 @@
 	],
 	"author": {
 		"name": "Crypto APIs, Inc.",
+		"email": "developers@cryptoapis.io",
 		"url": "https://cryptoapis.io"
 	},
 	"license": "MIT",
