@@ -140,6 +140,25 @@ API version `2024-12-12` is sent as `x-api-version` header on all requests.
 | `contracts` | get-token-details (EVM/Solana) |
 | `utils` | validate-address, decode-raw-transaction, derive-addresses, convert-bch-address (EVM/UTXO/XRP) |
 
+## Git Remotes & Branching
+
+This repo has two remotes with separate histories:
+
+- **`origin`** → Bitbucket (`git@bitbucket.org:menadev/cryptoapis-n8n-nodes.git`) — branch `master`, full history
+- **`github`** → GitHub (`git@cryptoapis.github.com:CryptoAPIs-io/cryptoapis-n8n-nodes.git`) — branch `main`, clean orphan history (no Bitbucket history)
+
+**Workflow for syncing to GitHub:**
+1. Commit and push to Bitbucket: `git push origin master`
+2. Cherry-pick to GitHub (never merge — that leaks Bitbucket history):
+   ```bash
+   git checkout main
+   git cherry-pick <commit-hash>
+   git push github main
+   git checkout master
+   ```
+
+**SSH config** uses host alias `cryptoapis.github.com` for the GitHub SSH key.
+
 ## Release
 
 GitHub Actions workflow (`.github/workflows/publish.yml`): triggers on GitHub release creation, runs `npm publish --provenance --access public` with Node 20.
