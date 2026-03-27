@@ -13,6 +13,7 @@ export async function executeMarketData(
 		const response = await cryptoApisRequest.call(this, {
 			method: 'GET',
 			endpoint: `/market-data/assets/by-id/${encodeURIComponent(assetId)}`,
+			resource: 'marketData',
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
@@ -23,6 +24,7 @@ export async function executeMarketData(
 		const response = await cryptoApisRequest.call(this, {
 			method: 'GET',
 			endpoint: `/market-data/assets/by-symbol/${encodeURIComponent(fromSymbol)}/${encodeURIComponent(toSymbol)}`,
+			resource: 'marketData',
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
@@ -33,6 +35,7 @@ export async function executeMarketData(
 		const response = await cryptoApisRequest.call(this, {
 			method: 'GET',
 			endpoint: `/market-data/exchange-rates/by-symbol/${encodeURIComponent(fromSymbol)}/${encodeURIComponent(toSymbol)}`,
+			resource: 'marketData',
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
@@ -43,6 +46,7 @@ export async function executeMarketData(
 		const response = await cryptoApisRequest.call(this, {
 			method: 'GET',
 			endpoint: `/market-data/exchange-rates/by-id/${encodeURIComponent(fromAssetId)}/${encodeURIComponent(toAssetId)}`,
+			resource: 'marketData',
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
@@ -57,7 +61,7 @@ export async function executeMarketData(
 
 		const items = await handleOffsetPagination.call(
 			this,
-			{ method: 'GET', endpoint: '/market-data/metadata/assets', qs },
+			{ method: 'GET', endpoint: '/market-data/metadata/assets', qs, resource: 'marketData' },
 			returnAll,
 			limit,
 		);

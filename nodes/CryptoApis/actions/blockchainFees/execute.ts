@@ -12,6 +12,7 @@ export async function executeBlockchainFees(
 	if (blockchainType === 'xrp') {
 		// XRP: GET /blockchain-fees/xrp/{network}/mempool
 		const response = await cryptoApisRequest.call(this, {
+			resource: 'blockchainFees',
 			method: 'GET',
 			endpoint: `/blockchain-fees/xrp/${network}/mempool`,
 		});
@@ -22,6 +23,7 @@ export async function executeBlockchainFees(
 
 	if (operation === 'getFeeRecommendations') {
 		const response = await cryptoApisRequest.call(this, {
+			resource: 'blockchainFees',
 			method: 'GET',
 			endpoint: `/blockchain-fees/${blockchainType}/${blockchain}/${network}/mempool`,
 		});
@@ -30,6 +32,7 @@ export async function executeBlockchainFees(
 
 	if (operation === 'getEip1559FeeRecommendations') {
 		const response = await cryptoApisRequest.call(this, {
+			resource: 'blockchainFees',
 			method: 'GET',
 			endpoint: `/blockchain-fees/evm/${blockchain}/${network}/mempool-eip1559`,
 		});
@@ -41,6 +44,7 @@ export async function executeBlockchainFees(
 		const toAddress = this.getNodeParameter('toAddress', index) as string;
 		const amount = this.getNodeParameter('amount', index) as string;
 		const response = await cryptoApisRequest.call(this, {
+			resource: 'blockchainFees',
 			method: 'POST',
 			endpoint: `/blockchain-fees/evm/${blockchain}/${network}/gas-estimate`,
 			body: { sender: fromAddress, recipient: toAddress, amount } as IDataObject,
@@ -54,6 +58,7 @@ export async function executeBlockchainFees(
 		const contractType = this.getNodeParameter('contractType', index) as string;
 		const tokenAmount = this.getNodeParameter('tokenAmount', index) as string;
 		const response = await cryptoApisRequest.call(this, {
+			resource: 'blockchainFees',
 			method: 'POST',
 			endpoint: `/blockchain-fees/evm/${blockchain}/${network}/gas-estimate`,
 			body: {
@@ -71,6 +76,7 @@ export async function executeBlockchainFees(
 		const contractAddress = this.getNodeParameter('contractAddress', index) as string;
 		const data = this.getNodeParameter('data', index) as string;
 		const response = await cryptoApisRequest.call(this, {
+			resource: 'blockchainFees',
 			method: 'POST',
 			endpoint: `/blockchain-fees/evm/${blockchain}/${network}/gas-estimate`,
 			body: { sender: fromAddress, contractAddress, data } as IDataObject,
@@ -82,6 +88,7 @@ export async function executeBlockchainFees(
 		const confirmationTarget = this.getNodeParameter('confirmationTarget', index) as number;
 		const feeRatePriority = this.getNodeParameter('feeRatePriority', index) as string;
 		const response = await cryptoApisRequest.call(this, {
+			resource: 'blockchainFees',
 			method: 'GET',
 			endpoint: `/blockchain-fees/utxo/${blockchain}/${network}/smart-fee`,
 			qs: { confirmationTarget, feeRatePriority } as IDataObject,

@@ -29,6 +29,7 @@ export async function executeHdWallet(
 
 		if (operation === 'syncWallet') {
 			const response = await cryptoApisRequest.call(this, {
+				resource: 'hdWallet',
 				method: 'POST',
 				endpoint: `${basePath}/xpubs/sync`,
 				body: { extendedPublicKey } as IDataObject,
@@ -41,7 +42,7 @@ export async function executeHdWallet(
 			const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 			const items = await handleOffsetPagination.call(
 				this,
-				{ method: 'GET', endpoint: `${basePath}/xpubs` },
+				{ resource: 'hdWallet', method: 'GET', endpoint: `${basePath}/xpubs` },
 				returnAll,
 				limit,
 			);
@@ -50,6 +51,7 @@ export async function executeHdWallet(
 
 		if (operation === 'activateWallet') {
 			const response = await cryptoApisRequest.call(this, {
+				resource: 'hdWallet',
 				method: 'PUT',
 				endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}/activate`,
 			});
@@ -58,6 +60,7 @@ export async function executeHdWallet(
 
 		if (operation === 'deleteWallet') {
 			const response = await cryptoApisRequest.call(this, {
+				resource: 'hdWallet',
 				method: 'DELETE',
 				endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}`,
 			});
@@ -66,6 +69,7 @@ export async function executeHdWallet(
 
 		if (operation === 'getSyncStatus') {
 			const response = await cryptoApisRequest.call(this, {
+				resource: 'hdWallet',
 				method: 'GET',
 				endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}/status`,
 			});
@@ -80,6 +84,7 @@ export async function executeHdWallet(
 
 	if (operation === 'getDetails') {
 		const response = await cryptoApisRequest.call(this, {
+			resource: 'hdWallet',
 			method: 'GET',
 			endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}`,
 		});
@@ -93,6 +98,7 @@ export async function executeHdWallet(
 			body.addressFormat = addressFormat;
 		}
 		const response = await cryptoApisRequest.call(this, {
+			resource: 'hdWallet',
 			method: 'POST',
 			endpoint: `${basePath}/xpubs/derive-addresses`,
 			body,
@@ -105,7 +111,7 @@ export async function executeHdWallet(
 		const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 		const items = await handleOffsetPagination.call(
 			this,
-			{ method: 'GET', endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}/addresses` },
+			{ resource: 'hdWallet', method: 'GET', endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}/addresses` },
 			returnAll,
 			limit,
 		);
@@ -117,7 +123,7 @@ export async function executeHdWallet(
 		const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 		const items = await handleCursorPagination.call(
 			this,
-			{ method: 'GET', endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}/transactions` },
+			{ resource: 'hdWallet', method: 'GET', endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}/transactions` },
 			returnAll,
 			limit,
 		);
@@ -129,7 +135,7 @@ export async function executeHdWallet(
 		const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 		const items = await handleOffsetPagination.call(
 			this,
-			{ method: 'GET', endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}/assets` },
+			{ resource: 'hdWallet', method: 'GET', endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}/assets` },
 			returnAll,
 			limit,
 		);
@@ -151,6 +157,7 @@ export async function executeHdWallet(
 			};
 			if (data) body.data = data;
 			const response = await cryptoApisRequest.call(this, {
+				resource: 'hdWallet',
 				method: 'POST',
 				endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}/transactions/prepare`,
 				body,
@@ -167,6 +174,7 @@ export async function executeHdWallet(
 				fee: { priority: feePriority },
 			};
 			const response = await cryptoApisRequest.call(this, {
+				resource: 'hdWallet',
 				method: 'POST',
 				endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}/transactions/prepare`,
 				body,

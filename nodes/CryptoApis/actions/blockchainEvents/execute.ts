@@ -42,6 +42,7 @@ export async function executeBlockchainEvents(
 			method: 'POST',
 			endpoint: '/subscriptions',
 			body,
+			resource: 'blockchainEvents',
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
@@ -55,7 +56,7 @@ export async function executeBlockchainEvents(
 		const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 		const items = await handleOffsetPagination.call(
 			this,
-			{ method: 'GET', endpoint: basePath },
+			{ method: 'GET', endpoint: basePath, resource: 'blockchainEvents' },
 			returnAll,
 			limit,
 		);
@@ -67,6 +68,7 @@ export async function executeBlockchainEvents(
 		const response = await cryptoApisRequest.call(this, {
 			method: 'GET',
 			endpoint: `${basePath}/${encodeURIComponent(referenceId)}`,
+			resource: 'blockchainEvents',
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
@@ -76,6 +78,7 @@ export async function executeBlockchainEvents(
 		const response = await cryptoApisRequest.call(this, {
 			method: 'DELETE',
 			endpoint: `${basePath}/${encodeURIComponent(referenceId)}`,
+			resource: 'blockchainEvents',
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
@@ -85,6 +88,7 @@ export async function executeBlockchainEvents(
 		const response = await cryptoApisRequest.call(this, {
 			method: 'PUT',
 			endpoint: `${basePath}/${encodeURIComponent(referenceId)}/activate`,
+			resource: 'blockchainEvents',
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}

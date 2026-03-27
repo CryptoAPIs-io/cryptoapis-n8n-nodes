@@ -33,6 +33,7 @@ export async function executeAddressLatest(
 
 	if (operation === 'getBalance') {
 		const response = await cryptoApisRequest.call(this, {
+			resource: 'addressLatest',
 			method: 'GET',
 			endpoint: `${basePath}/${encodeURIComponent(address)}/balance`,
 		});
@@ -41,6 +42,7 @@ export async function executeAddressLatest(
 
 	if (operation === 'getNextNonce') {
 		const response = await cryptoApisRequest.call(this, {
+			resource: 'addressLatest',
 			method: 'GET',
 			endpoint: `${basePath}/${encodeURIComponent(address)}/next-available-nonce`,
 		});
@@ -52,7 +54,7 @@ export async function executeAddressLatest(
 		const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 		const items = await handleCursorPagination.call(
 			this,
-			{ method: 'GET', endpoint: `${basePath}/${encodeURIComponent(address)}/transactions` },
+			{ resource: 'addressLatest', method: 'GET', endpoint: `${basePath}/${encodeURIComponent(address)}/transactions` },
 			returnAll,
 			limit,
 		);
@@ -64,7 +66,7 @@ export async function executeAddressLatest(
 		const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 		const items = await handleCursorPagination.call(
 			this,
-			{ method: 'GET', endpoint: `${basePath}/${encodeURIComponent(address)}/token-transfers` },
+			{ resource: 'addressLatest', method: 'GET', endpoint: `${basePath}/${encodeURIComponent(address)}/token-transfers` },
 			returnAll,
 			limit,
 		);
@@ -76,7 +78,7 @@ export async function executeAddressLatest(
 		const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 		const items = await handleCursorPagination.call(
 			this,
-			{ method: 'GET', endpoint: `${basePath}/${encodeURIComponent(address)}/internal-transactions` },
+			{ resource: 'addressLatest', method: 'GET', endpoint: `${basePath}/${encodeURIComponent(address)}/internal-transactions` },
 			returnAll,
 			limit,
 		);
@@ -88,7 +90,7 @@ export async function executeAddressLatest(
 		const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 		const items = await handleCursorPagination.call(
 			this,
-			{ method: 'GET', endpoint: `${basePath}/${encodeURIComponent(address)}/tokens` },
+			{ resource: 'addressLatest', method: 'GET', endpoint: `${basePath}/${encodeURIComponent(address)}/tokens` },
 			returnAll,
 			limit,
 		);

@@ -13,6 +13,7 @@ export async function executeBroadcast(
 		method: 'POST',
 		endpoint: `/broadcast-transactions/${blockchain}/${network}`,
 		body: { signedTransactionHex } as IDataObject,
+		resource: 'broadcast',
 	});
 	return [{ json: unwrapSingleItem(response) }];
 }

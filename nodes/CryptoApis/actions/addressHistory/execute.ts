@@ -18,6 +18,7 @@ export async function executeAddressHistory(
 	if (blockchainType === 'management') {
 		if (operation === 'syncAddress') {
 			const response = await cryptoApisRequest.call(this, {
+				resource: 'addressHistory',
 				method: 'POST',
 				endpoint: `/address-syncs/${blockchain}/${network}`,
 				body: { address } as IDataObject,
@@ -30,7 +31,7 @@ export async function executeAddressHistory(
 			const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 			const items = await handleCursorPagination.call(
 				this,
-				{ method: 'GET', endpoint: `/address-syncs/${blockchain}/${network}` },
+				{ resource: 'addressHistory', method: 'GET', endpoint: `/address-syncs/${blockchain}/${network}` },
 				returnAll,
 				limit,
 			);
@@ -39,6 +40,7 @@ export async function executeAddressHistory(
 
 		if (operation === 'activateAddress') {
 			const response = await cryptoApisRequest.call(this, {
+				resource: 'addressHistory',
 				method: 'PUT',
 				endpoint: `/address-syncs/${blockchain}/${network}/${encodeURIComponent(address)}/activate`,
 			});
@@ -47,6 +49,7 @@ export async function executeAddressHistory(
 
 		if (operation === 'deleteAddress') {
 			const response = await cryptoApisRequest.call(this, {
+				resource: 'addressHistory',
 				method: 'DELETE',
 				endpoint: `/address-syncs/${blockchain}/${network}/${encodeURIComponent(address)}`,
 			});
@@ -60,6 +63,7 @@ export async function executeAddressHistory(
 
 		if (operation === 'getStatistics') {
 			const response = await cryptoApisRequest.call(this, {
+				resource: 'addressHistory',
 				method: 'GET',
 				endpoint: `${basePath}/stats`,
 			});
@@ -71,7 +75,7 @@ export async function executeAddressHistory(
 			const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 			const items = await handleCursorPagination.call(
 				this,
-				{ method: 'GET', endpoint: `${basePath}/transactions` },
+				{ resource: 'addressHistory', method: 'GET', endpoint: `${basePath}/transactions` },
 				returnAll,
 				limit,
 			);
@@ -83,7 +87,7 @@ export async function executeAddressHistory(
 			const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 			const items = await handleCursorPagination.call(
 				this,
-				{ method: 'GET', endpoint: `${basePath}/token-transfers` },
+				{ resource: 'addressHistory', method: 'GET', endpoint: `${basePath}/token-transfers` },
 				returnAll,
 				limit,
 			);
@@ -95,7 +99,7 @@ export async function executeAddressHistory(
 			const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 			const items = await handleCursorPagination.call(
 				this,
-				{ method: 'GET', endpoint: `${basePath}/internal-transactions` },
+				{ resource: 'addressHistory', method: 'GET', endpoint: `${basePath}/internal-transactions` },
 				returnAll,
 				limit,
 			);
@@ -107,7 +111,7 @@ export async function executeAddressHistory(
 			const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 			const items = await handleCursorPagination.call(
 				this,
-				{ method: 'GET', endpoint: `${basePath}/tokens` },
+				{ resource: 'addressHistory', method: 'GET', endpoint: `${basePath}/tokens` },
 				returnAll,
 				limit,
 			);
@@ -121,6 +125,7 @@ export async function executeAddressHistory(
 
 		if (operation === 'getStatistics') {
 			const response = await cryptoApisRequest.call(this, {
+				resource: 'addressHistory',
 				method: 'GET',
 				endpoint: `${basePath}/stats`,
 			});
@@ -132,7 +137,7 @@ export async function executeAddressHistory(
 			const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 			const items = await handleCursorPagination.call(
 				this,
-				{ method: 'GET', endpoint: `${basePath}/transactions` },
+				{ resource: 'addressHistory', method: 'GET', endpoint: `${basePath}/transactions` },
 				returnAll,
 				limit,
 			);
@@ -144,7 +149,7 @@ export async function executeAddressHistory(
 			const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 			const items = await handleCursorPagination.call(
 				this,
-				{ method: 'GET', endpoint: `${basePath}/unspent-outputs` },
+				{ resource: 'addressHistory', method: 'GET', endpoint: `${basePath}/unspent-outputs` },
 				returnAll,
 				limit,
 			);

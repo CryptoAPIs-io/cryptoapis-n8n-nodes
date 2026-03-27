@@ -14,6 +14,7 @@ export async function executeContracts(
 		const response = await cryptoApisRequest.call(this, {
 			method: 'GET',
 			endpoint: `/smart-contracts/evm/${blockchain}/${network}/${encodeURIComponent(contractAddress)}/token-data`,
+			resource: 'contracts',
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
@@ -22,6 +23,7 @@ export async function executeContracts(
 		const response = await cryptoApisRequest.call(this, {
 			method: 'GET',
 			endpoint: `/smart-contracts/solana/${network}/${encodeURIComponent(contractAddress)}/token-data`,
+			resource: 'contracts',
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}

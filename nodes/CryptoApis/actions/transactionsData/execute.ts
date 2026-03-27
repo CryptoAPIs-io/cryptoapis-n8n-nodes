@@ -35,6 +35,7 @@ export async function executeTransactionsData(
 
 	if (operation === 'getTransactionDetails') {
 		const response = await cryptoApisRequest.call(this, {
+			resource: 'transactionsData',
 			method: 'GET',
 			endpoint: `${basePath}/${encodeURIComponent(transactionHash)}`,
 		});
@@ -43,6 +44,7 @@ export async function executeTransactionsData(
 
 	if (operation === 'getRawTransactionData') {
 		const response = await cryptoApisRequest.call(this, {
+			resource: 'transactionsData',
 			method: 'GET',
 			endpoint: `${basePath}/${encodeURIComponent(transactionHash)}/raw`,
 		});
@@ -54,7 +56,7 @@ export async function executeTransactionsData(
 		const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 		const items = await handleCursorPagination.call(
 			this,
-			{ method: 'GET', endpoint: `${basePath}/${encodeURIComponent(transactionHash)}/internal-transactions` },
+			{ resource: 'transactionsData', method: 'GET', endpoint: `${basePath}/${encodeURIComponent(transactionHash)}/internal-transactions` },
 			returnAll,
 			limit,
 		);
@@ -66,7 +68,7 @@ export async function executeTransactionsData(
 		const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 		const items = await handleCursorPagination.call(
 			this,
-			{ method: 'GET', endpoint: `${basePath}/${encodeURIComponent(transactionHash)}/token-transfers` },
+			{ resource: 'transactionsData', method: 'GET', endpoint: `${basePath}/${encodeURIComponent(transactionHash)}/token-transfers` },
 			returnAll,
 			limit,
 		);
@@ -78,7 +80,7 @@ export async function executeTransactionsData(
 		const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 		const items = await handleCursorPagination.call(
 			this,
-			{ method: 'GET', endpoint: `${basePath}/${encodeURIComponent(transactionHash)}/logs` },
+			{ resource: 'transactionsData', method: 'GET', endpoint: `${basePath}/${encodeURIComponent(transactionHash)}/logs` },
 			returnAll,
 			limit,
 		);

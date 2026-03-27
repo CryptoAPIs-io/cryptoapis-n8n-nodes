@@ -27,6 +27,7 @@ export async function executeUtils(
 			method: 'GET',
 			endpoint: `/utils/${blockchain}/${network}/xpubs/${encodeURIComponent(extendedPublicKey)}/derive-addresses`,
 			qs,
+			resource: 'utils',
 		});
 		return unwrapItems(response).map((item) => ({ json: item }));
 	}
@@ -41,6 +42,7 @@ export async function executeUtils(
 			const response = await cryptoApisRequest.call(this, {
 				method: 'GET',
 				endpoint: `/utils/evm/${blockchain}/${network}/addresses/${encodeURIComponent(address)}/validate`,
+				resource: 'utils',
 			});
 			return [{ json: unwrapSingleItem(response) }];
 		}
@@ -51,6 +53,7 @@ export async function executeUtils(
 				method: 'POST',
 				endpoint: `/utils/evm/${blockchain}/${network}/decode-raw-transaction`,
 				body: { rawTransactionHex } as IDataObject,
+				resource: 'utils',
 			});
 			return [{ json: unwrapSingleItem(response) }];
 		}
@@ -66,6 +69,7 @@ export async function executeUtils(
 			const response = await cryptoApisRequest.call(this, {
 				method: 'GET',
 				endpoint: `/utils/utxo/${blockchain}/${network}/addresses/${encodeURIComponent(address)}/validate`,
+				resource: 'utils',
 			});
 			return [{ json: unwrapSingleItem(response) }];
 		}
@@ -76,6 +80,7 @@ export async function executeUtils(
 				method: 'POST',
 				endpoint: `/utils/utxo/${blockchain}/${network}/decode-raw-transaction`,
 				body: { rawTransactionHex } as IDataObject,
+				resource: 'utils',
 			});
 			return [{ json: unwrapSingleItem(response) }];
 		}
@@ -86,6 +91,7 @@ export async function executeUtils(
 				method: 'POST',
 				endpoint: `/utils/utxo/bitcoin-cash/${network}/convert-address`,
 				body: { address } as IDataObject,
+				resource: 'utils',
 			});
 			return [{ json: unwrapSingleItem(response) }];
 		}
@@ -100,6 +106,7 @@ export async function executeUtils(
 			const response = await cryptoApisRequest.call(this, {
 				method: 'GET',
 				endpoint: `/utils/xrp/${network}/${encodeURIComponent(address)}/validate`,
+				resource: 'utils',
 			});
 			return [{ json: unwrapSingleItem(response) }];
 		}
@@ -110,6 +117,7 @@ export async function executeUtils(
 				method: 'POST',
 				endpoint: `/utils/xrp/${network}/decode-x-address`,
 				body: { address } as IDataObject,
+				resource: 'utils',
 			});
 			return [{ json: unwrapSingleItem(response) }];
 		}
@@ -123,6 +131,7 @@ export async function executeUtils(
 				method: 'POST',
 				endpoint: `/utils/xrp/${network}/encode-x-address`,
 				body,
+				resource: 'utils',
 			});
 			return [{ json: unwrapSingleItem(response) }];
 		}

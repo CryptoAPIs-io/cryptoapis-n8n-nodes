@@ -30,6 +30,7 @@ export async function executePrepareTransactions(
 			method: 'POST',
 			endpoint: `${basePath}/native-coins`,
 			body,
+			resource: 'prepareTransactions',
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
@@ -50,6 +51,7 @@ export async function executePrepareTransactions(
 			method: 'POST',
 			endpoint: `${basePath}/fungible-tokens`,
 			body,
+			resource: 'prepareTransactions',
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
@@ -70,6 +72,7 @@ export async function executePrepareTransactions(
 			method: 'POST',
 			endpoint: `${basePath}/non-fungible-tokens`,
 			body,
+			resource: 'prepareTransactions',
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
