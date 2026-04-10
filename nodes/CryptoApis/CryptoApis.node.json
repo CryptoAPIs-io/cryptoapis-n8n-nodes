@@ -90,8 +90,4 @@
 		"unconfirmed transactions",
 		"new block"
 	],
-	"subcategories": {
-		"Core Nodes": ["Other Core Nodes"],
-		"Development": ["Blockchain Infrastructure"]
-	}
 }
