@@ -1,5 +1,5 @@
 import type { IExecuteFunctions, INodeExecutionData, IDataObject } from 'n8n-workflow';
-import { cryptoApisRequest, unwrapSingleItem, unwrapItems } from '../../transport/requestHelpers';
+import { cryptoApisRequest, unwrapSingleItem } from '../../transport/requestHelpers';
 import { handleOffsetPagination, handleCursorPagination } from '../../transport/paginationHelpers';
 
 function buildManagePath(blockchain: string, network: string): string {
