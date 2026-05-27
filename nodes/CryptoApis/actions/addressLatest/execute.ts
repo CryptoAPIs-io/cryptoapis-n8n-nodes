@@ -1,4 +1,4 @@
-import type { IExecuteFunctions, INodeExecutionData, IDataObject } from 'n8n-workflow';
+import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 import { cryptoApisRequest, unwrapSingleItem } from '../../transport/requestHelpers';
 import { handleCursorPagination } from '../../transport/paginationHelpers';
 
