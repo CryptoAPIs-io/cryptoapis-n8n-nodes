@@ -9,6 +9,7 @@ import {
 	SOLANA_NETWORKS,
 	XRP_NETWORKS,
 } from '../../transport/blockchainConstants';
+import { EVM_NEXT_NONCE_BLOCKCHAINS, EVM_NEXT_NONCE_NETWORKS } from './blockchainEnums';
 
 export const addressLatestOperations: INodeProperties[] = [
 	{
@@ -45,7 +46,8 @@ export const addressLatestOperations: INodeProperties[] = [
 ];
 
 export const addressLatestFields: INodeProperties[] = [
-	// Blockchain (EVM)
+	// Blockchain/Network (EVM) — getNextNonce supports only 3 of the 9 EVM chains per the spec,
+	// so it gets its own narrower dropdown; every other EVM operation here genuinely supports all 9.
 	{
 		displayName: 'Blockchain',
 		name: 'blockchain',
@@ -53,9 +55,8 @@ export const addressLatestFields: INodeProperties[] = [
 		required: true,
 		default: 'ethereum',
 		options: blockchainOptions(EVM_BLOCKCHAINS),
-		displayOptions: { show: { resource: ['addressLatest'], blockchainType: ['evm'] } },
+		displayOptions: { show: { resource: ['addressLatest'], blockchainType: ['evm'], operation: ['getBalance', 'listTransactions', 'listTokenTransfers', 'listInternalTransactions'] } },
 	},
-	// Network (EVM)
 	{
 		displayName: 'Network',
 		name: 'network',
@@ -63,7 +64,25 @@ export const addressLatestFields: INodeProperties[] = [
 		required: true,
 		default: 'mainnet',
 		options: networkOptions(EVM_NETWORKS),
-		displayOptions: { show: { resource: ['addressLatest'], blockchainType: ['evm'] } },
+		displayOptions: { show: { resource: ['addressLatest'], blockchainType: ['evm'], operation: ['getBalance', 'listTransactions', 'listTokenTransfers', 'listInternalTransactions'] } },
+	},
+	{
+		displayName: 'Blockchain',
+		name: 'blockchain',
+		type: 'options',
+		required: true,
+		default: 'ethereum',
+		options: blockchainOptions(EVM_NEXT_NONCE_BLOCKCHAINS),
+		displayOptions: { show: { resource: ['addressLatest'], blockchainType: ['evm'], operation: ['getNextNonce'] } },
+	},
+	{
+		displayName: 'Network',
+		name: 'network',
+		type: 'options',
+		required: true,
+		default: 'mainnet',
+		options: networkOptions(EVM_NEXT_NONCE_NETWORKS),
+		displayOptions: { show: { resource: ['addressLatest'], blockchainType: ['evm'], operation: ['getNextNonce'] } },
 	},
 	// Blockchain (UTXO)
 	{
@@ -104,6 +123,16 @@ export const addressLatestFields: INodeProperties[] = [
 		default: 'mainnet',
 		options: networkOptions(XRP_NETWORKS),
 		displayOptions: { show: { resource: ['addressLatest'], blockchainType: ['xrp'] } },
+	},
+	// Network (Kaspa) — mainnet only; was missing entirely, so the path never included a network segment.
+	{
+		displayName: 'Network',
+		name: 'network',
+		type: 'options',
+		required: true,
+		default: 'mainnet',
+		options: [{ name: 'Mainnet', value: 'mainnet' }],
+		displayOptions: { show: { resource: ['addressLatest'], blockchainType: ['kaspa'] } },
 	},
 	// Address (all types)
 	{
