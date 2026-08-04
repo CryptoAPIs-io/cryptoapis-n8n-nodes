@@ -1,13 +1,21 @@
 import type { INodeProperties } from 'n8n-workflow';
+import { blockchainOptions, networkOptions, XRP_NETWORKS } from '../../transport/blockchainConstants';
 import {
-	blockchainOptions,
-	networkOptions,
-	EVM_BLOCKCHAINS,
-	EVM_NETWORKS,
-	UTXO_BLOCKCHAINS,
-	UTXO_NETWORKS,
-	XRP_NETWORKS,
-} from '../../transport/blockchainConstants';
+	EVM_MEMPOOL_BLOCKCHAINS,
+	EVM_MEMPOOL_NETWORKS,
+	EVM_EIP1559_BLOCKCHAINS,
+	EVM_EIP1559_NETWORKS,
+	EVM_NATIVE_COIN_GAS_BLOCKCHAINS,
+	EVM_NATIVE_COIN_GAS_NETWORKS,
+	EVM_TOKEN_GAS_BLOCKCHAINS,
+	EVM_TOKEN_GAS_NETWORKS,
+	EVM_CONTRACT_GAS_BLOCKCHAINS,
+	EVM_CONTRACT_GAS_NETWORKS,
+	UTXO_MEMPOOL_BLOCKCHAINS,
+	UTXO_MEMPOOL_NETWORKS,
+	UTXO_SMART_FEE_BLOCKCHAINS,
+	UTXO_SMART_FEE_NETWORKS,
+} from './blockchainEnums';
 
 export const blockchainFeesOperations: INodeProperties[] = [
 	{
@@ -42,15 +50,17 @@ export const blockchainFeesOperations: INodeProperties[] = [
 ];
 
 export const blockchainFeesFields: INodeProperties[] = [
-	// Blockchain (EVM)
+	// Blockchain/Network (EVM) — per-operation enums, since support genuinely differs:
+	// contract-interaction gas EXCLUDES ethereum/ethereum-classic/binance-smart-chain entirely,
+	// eip-1559 only exists for 5 of 9 chains, mempool excludes tron (dedicated path).
 	{
 		displayName: 'Blockchain',
 		name: 'blockchain',
 		type: 'options',
 		required: true,
 		default: 'ethereum',
-		options: blockchainOptions(EVM_BLOCKCHAINS),
-		displayOptions: { show: { resource: ['blockchainFees'], blockchainType: ['evm'] } },
+		options: blockchainOptions(EVM_MEMPOOL_BLOCKCHAINS),
+		displayOptions: { show: { resource: ['blockchainFees'], blockchainType: ['evm'], operation: ['getFeeRecommendations'] } },
 	},
 	{
 		displayName: 'Network',
@@ -58,18 +68,91 @@ export const blockchainFeesFields: INodeProperties[] = [
 		type: 'options',
 		required: true,
 		default: 'mainnet',
-		options: networkOptions(EVM_NETWORKS),
-		displayOptions: { show: { resource: ['blockchainFees'], blockchainType: ['evm'] } },
+		options: networkOptions(EVM_MEMPOOL_NETWORKS),
+		displayOptions: { show: { resource: ['blockchainFees'], blockchainType: ['evm'], operation: ['getFeeRecommendations'] } },
 	},
-	// Blockchain (UTXO)
+	{
+		displayName: 'Blockchain',
+		name: 'blockchain',
+		type: 'options',
+		required: true,
+		default: 'ethereum',
+		options: blockchainOptions(EVM_EIP1559_BLOCKCHAINS),
+		displayOptions: { show: { resource: ['blockchainFees'], blockchainType: ['evm'], operation: ['getEip1559FeeRecommendations'] } },
+	},
+	{
+		displayName: 'Network',
+		name: 'network',
+		type: 'options',
+		required: true,
+		default: 'mainnet',
+		options: networkOptions(EVM_EIP1559_NETWORKS),
+		displayOptions: { show: { resource: ['blockchainFees'], blockchainType: ['evm'], operation: ['getEip1559FeeRecommendations'] } },
+	},
+	{
+		displayName: 'Blockchain',
+		name: 'blockchain',
+		type: 'options',
+		required: true,
+		default: 'ethereum',
+		options: blockchainOptions(EVM_NATIVE_COIN_GAS_BLOCKCHAINS),
+		displayOptions: { show: { resource: ['blockchainFees'], blockchainType: ['evm'], operation: ['estimateNativeCoinTransferGas'] } },
+	},
+	{
+		displayName: 'Network',
+		name: 'network',
+		type: 'options',
+		required: true,
+		default: 'mainnet',
+		options: networkOptions(EVM_NATIVE_COIN_GAS_NETWORKS),
+		displayOptions: { show: { resource: ['blockchainFees'], blockchainType: ['evm'], operation: ['estimateNativeCoinTransferGas'] } },
+	},
+	{
+		displayName: 'Blockchain',
+		name: 'blockchain',
+		type: 'options',
+		required: true,
+		default: 'ethereum',
+		options: blockchainOptions(EVM_TOKEN_GAS_BLOCKCHAINS),
+		displayOptions: { show: { resource: ['blockchainFees'], blockchainType: ['evm'], operation: ['estimateTokenTransferGas'] } },
+	},
+	{
+		displayName: 'Network',
+		name: 'network',
+		type: 'options',
+		required: true,
+		default: 'mainnet',
+		options: networkOptions(EVM_TOKEN_GAS_NETWORKS),
+		displayOptions: { show: { resource: ['blockchainFees'], blockchainType: ['evm'], operation: ['estimateTokenTransferGas'] } },
+	},
+	{
+		displayName: 'Blockchain',
+		name: 'blockchain',
+		type: 'options',
+		required: true,
+		default: 'arbitrum',
+		options: blockchainOptions(EVM_CONTRACT_GAS_BLOCKCHAINS),
+		description: 'ethereum, ethereum-classic, and binance-smart-chain do not support this endpoint per the spec',
+		displayOptions: { show: { resource: ['blockchainFees'], blockchainType: ['evm'], operation: ['estimateContractInteractionGas'] } },
+	},
+	{
+		displayName: 'Network',
+		name: 'network',
+		type: 'options',
+		required: true,
+		default: 'mainnet',
+		options: networkOptions(EVM_CONTRACT_GAS_NETWORKS),
+		displayOptions: { show: { resource: ['blockchainFees'], blockchainType: ['evm'], operation: ['estimateContractInteractionGas'] } },
+	},
+	// Blockchain/Network (UTXO)
 	{
 		displayName: 'Blockchain',
 		name: 'blockchain',
 		type: 'options',
 		required: true,
 		default: 'bitcoin',
-		options: blockchainOptions(UTXO_BLOCKCHAINS),
-		displayOptions: { show: { resource: ['blockchainFees'], blockchainType: ['utxo'] } },
+		options: blockchainOptions(UTXO_MEMPOOL_BLOCKCHAINS),
+		displayOptions: { show: { resource: ['blockchainFees'], blockchainType: ['utxo'], operation: ['getFeeRecommendations'] } },
 	},
 	{
 		displayName: 'Network',
@@ -77,8 +160,27 @@ export const blockchainFeesFields: INodeProperties[] = [
 		type: 'options',
 		required: true,
 		default: 'mainnet',
-		options: networkOptions(UTXO_NETWORKS),
-		displayOptions: { show: { resource: ['blockchainFees'], blockchainType: ['utxo'] } },
+		options: networkOptions(UTXO_MEMPOOL_NETWORKS),
+		displayOptions: { show: { resource: ['blockchainFees'], blockchainType: ['utxo'], operation: ['getFeeRecommendations'] } },
+	},
+	{
+		displayName: 'Blockchain',
+		name: 'blockchain',
+		type: 'options',
+		required: true,
+		default: 'bitcoin',
+		options: blockchainOptions(UTXO_SMART_FEE_BLOCKCHAINS),
+		description: 'bitcoin-cash, dogecoin, and zcash do not support this endpoint per the spec',
+		displayOptions: { show: { resource: ['blockchainFees'], blockchainType: ['utxo'], operation: ['estimateTransactionSmartFee'] } },
+	},
+	{
+		displayName: 'Network',
+		name: 'network',
+		type: 'options',
+		required: true,
+		default: 'mainnet',
+		options: networkOptions(UTXO_SMART_FEE_NETWORKS),
+		displayOptions: { show: { resource: ['blockchainFees'], blockchainType: ['utxo'], operation: ['estimateTransactionSmartFee'] } },
 	},
 	// Network (XRP)
 	{
@@ -116,7 +218,7 @@ export const blockchainFeesFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['blockchainFees'],
-				operation: ['estimateNativeCoinTransferGas'],
+				operation: ['estimateNativeCoinTransferGas', 'estimateTokenTransferGas'],
 			},
 		},
 	},
@@ -126,11 +228,11 @@ export const blockchainFeesFields: INodeProperties[] = [
 		type: 'string',
 		required: true,
 		default: '',
-		description: 'Amount to transfer (in native coin smallest unit, e.g. wei)',
+		description: 'Amount to transfer (in native coin smallest unit, e.g. wei). For contract interaction, this is the native coin value sent with the call, e.g. "0".',
 		displayOptions: {
 			show: {
 				resource: ['blockchainFees'],
-				operation: ['estimateNativeCoinTransferGas'],
+				operation: ['estimateNativeCoinTransferGas', 'estimateContractInteractionGas'],
 			},
 		},
 	},

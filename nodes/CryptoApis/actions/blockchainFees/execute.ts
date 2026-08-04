@@ -31,39 +31,46 @@ export async function executeBlockchainFees(
 	}
 
 	if (operation === 'getEip1559FeeRecommendations') {
+		// Spec segment is eip-1559, not mempool-eip1559.
 		const response = await cryptoApisRequest.call(this, {
 			resource: 'blockchainFees',
 			method: 'GET',
-			endpoint: `/blockchain-fees/evm/${blockchain}/${network}/mempool-eip1559`,
+			endpoint: `/blockchain-fees/evm/${blockchain}/${network}/eip-1559`,
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
 
 	if (operation === 'estimateNativeCoinTransferGas') {
+		// Spec has 3 DISTINCT endpoints, not one generic gas-estimate -- this one is
+		// estimate-native-coin-transfer-gas-limit, body { sender, recipient, amount }.
 		const fromAddress = this.getNodeParameter('fromAddress', index) as string;
 		const toAddress = this.getNodeParameter('toAddress', index) as string;
 		const amount = this.getNodeParameter('amount', index) as string;
 		const response = await cryptoApisRequest.call(this, {
 			resource: 'blockchainFees',
 			method: 'POST',
-			endpoint: `/blockchain-fees/evm/${blockchain}/${network}/gas-estimate`,
+			endpoint: `/blockchain-fees/evm/${blockchain}/${network}/estimate-native-coin-transfer-gas-limit`,
 			body: { sender: fromAddress, recipient: toAddress, amount } as IDataObject,
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
 
 	if (operation === 'estimateTokenTransferGas') {
+		// Spec path is estimate-token-transfer-gas-limit; body field is "contract", not
+		// "contractAddress", and "recipient" is required (was missing entirely).
 		const fromAddress = this.getNodeParameter('fromAddress', index) as string;
+		const toAddress = this.getNodeParameter('toAddress', index) as string;
 		const contractAddress = this.getNodeParameter('contractAddress', index) as string;
 		const contractType = this.getNodeParameter('contractType', index) as string;
 		const tokenAmount = this.getNodeParameter('tokenAmount', index) as string;
 		const response = await cryptoApisRequest.call(this, {
 			resource: 'blockchainFees',
 			method: 'POST',
-			endpoint: `/blockchain-fees/evm/${blockchain}/${network}/gas-estimate`,
+			endpoint: `/blockchain-fees/evm/${blockchain}/${network}/estimate-token-transfer-gas-limit`,
 			body: {
 				sender: fromAddress,
-				contractAddress,
+				recipient: toAddress,
+				contract: contractAddress,
 				contractType,
 				amount: tokenAmount,
 			} as IDataObject,
@@ -72,26 +79,32 @@ export async function executeBlockchainFees(
 	}
 
 	if (operation === 'estimateContractInteractionGas') {
+		// Spec path is estimate-contract-interaction-gas-limit; body is { sender, recipient,
+		// amount, inputData } -- the contract address is "recipient" (was "contractAddress",
+		// dropped entirely), "data" is "inputData", and "amount" is required (was missing).
 		const fromAddress = this.getNodeParameter('fromAddress', index) as string;
 		const contractAddress = this.getNodeParameter('contractAddress', index) as string;
+		const amount = this.getNodeParameter('amount', index, '0') as string;
 		const data = this.getNodeParameter('data', index) as string;
 		const response = await cryptoApisRequest.call(this, {
 			resource: 'blockchainFees',
 			method: 'POST',
-			endpoint: `/blockchain-fees/evm/${blockchain}/${network}/gas-estimate`,
-			body: { sender: fromAddress, contractAddress, data } as IDataObject,
+			endpoint: `/blockchain-fees/evm/${blockchain}/${network}/estimate-contract-interaction-gas-limit`,
+			body: { sender: fromAddress, recipient: contractAddress, amount, inputData: data } as IDataObject,
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
 
 	if (operation === 'estimateTransactionSmartFee') {
+		// Spec segment is smart, not smart-fee. Query param is estimateMode (lowercase
+		// economical/conservative values), not feeRatePriority (was ECONOMICAL/CONSERVATIVE).
 		const confirmationTarget = this.getNodeParameter('confirmationTarget', index) as number;
 		const feeRatePriority = this.getNodeParameter('feeRatePriority', index) as string;
 		const response = await cryptoApisRequest.call(this, {
 			resource: 'blockchainFees',
 			method: 'GET',
-			endpoint: `/blockchain-fees/utxo/${blockchain}/${network}/smart-fee`,
-			qs: { confirmationTarget, feeRatePriority } as IDataObject,
+			endpoint: `/blockchain-fees/utxo/${blockchain}/${network}/smart`,
+			qs: { confirmationTarget, estimateMode: feeRatePriority.toLowerCase() } as IDataObject,
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
