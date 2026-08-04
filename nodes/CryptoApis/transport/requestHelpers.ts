@@ -47,8 +47,12 @@ export async function cryptoApisRequest(
 		requestOptions.qs = options.qs;
 	}
 
-	if (options.body && Object.keys(options.body).length > 0
-		&& (options.method === 'POST' || options.method === 'PUT')) {
+	// Wrap whenever the caller passed a body object at all — including an empty one ({}). Some
+	// endpoints (e.g. activate) require the { data: { item: {} } } wrapper with no fields inside it;
+	// gating on Object.keys(...).length > 0 previously meant those calls sent no body at all and
+	// failed with unsupported_media_type instead of reaching the API. Omit `body` entirely (undefined)
+	// for calls that genuinely send none.
+	if (options.body !== undefined && (options.method === 'POST' || options.method === 'PUT')) {
 		requestOptions.body = {
 			data: {
 				item: options.body,
