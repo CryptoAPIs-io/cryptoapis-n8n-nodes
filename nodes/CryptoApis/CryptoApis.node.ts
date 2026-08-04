@@ -7,6 +7,7 @@ import type {
 import { NodeConnectionTypes } from 'n8n-workflow';
 import { router } from './actions/router';
 
+import { amlOperations, amlFields } from './actions/aml/index';
 import { marketDataOperations, marketDataFields } from './actions/marketData/index';
 import { addressLatestOperations, addressLatestFields } from './actions/addressLatest/index';
 import { blockDataOperations, blockDataFields } from './actions/blockData/index';
@@ -50,6 +51,7 @@ export class CryptoApis implements INodeType {
 				type: 'options',
 				noDataExpression: true,
 				options: [
+					{ name: 'AML', value: 'aml', description: 'Anti-Money Laundering risk checks for addresses and transactions' },
 					{ name: 'Address History', value: 'addressHistory', description: 'Full transaction history for synced addresses' },
 					{ name: 'Address Latest', value: 'addressLatest', description: 'Current balances and recent transactions' },
 					{ name: 'Block Data', value: 'blockData', description: 'Block details and block-level transactions' },
@@ -67,6 +69,7 @@ export class CryptoApis implements INodeType {
 				default: 'marketData',
 			},
 			// Operations per resource
+			...amlOperations,
 			...marketDataOperations,
 			...addressLatestOperations,
 			...blockDataOperations,
@@ -81,6 +84,7 @@ export class CryptoApis implements INodeType {
 			...contractsOperations,
 			...utilsOperations,
 			// Fields per resource
+			...amlFields,
 			...marketDataFields,
 			...addressLatestFields,
 			...blockDataFields,
