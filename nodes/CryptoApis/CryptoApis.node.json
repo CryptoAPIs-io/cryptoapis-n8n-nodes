@@ -88,6 +88,14 @@
 		"eip-1559",
 		"confirmed transactions",
 		"unconfirmed transactions",
-		"new block"
+		"new block",
+		"aml",
+		"anti-money laundering",
+		"compliance",
+		"sanctions",
+		"fraud detection",
+		"risk score",
+		"screen transaction",
+		"verify address"
 	]
 }
