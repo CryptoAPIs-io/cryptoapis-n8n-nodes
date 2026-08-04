@@ -1,6 +1,7 @@
 import type { IExecuteFunctions, INodeExecutionData, IDataObject } from 'n8n-workflow';
 import { cryptoApisRequest, unwrapSingleItem } from '../../transport/requestHelpers';
 import { handleOffsetPagination } from '../../transport/paginationHelpers';
+import { EVENT_TYPES_REQUIRING_CONFIRMATIONS_COUNT } from './blockchainEnums';
 
 export async function executeBlockchainEvents(
 	this: IExecuteFunctions,
@@ -9,47 +10,41 @@ export async function executeBlockchainEvents(
 	const operation = this.getNodeParameter('operation', index) as string;
 
 	if (operation === 'createSubscription') {
+		// Real API has 8 dedicated per-event-type endpoints
+		// (/blockchain-events/{blockchain}/{network}/{event-slug}), not a generic
+		// POST /subscriptions -- eventType selects both the path segment and the field set.
 		const eventType = this.getNodeParameter('eventType', index) as string;
-		const callbackUrl = this.getNodeParameter('callbackUrl', index) as string;
-		const callbackSecretKey = this.getNodeParameter('callbackSecretKey', index, '') as string;
 		const blockchain = this.getNodeParameter('blockchain', index) as string;
 		const network = this.getNodeParameter('network', index) as string;
+		const callbackUrl = this.getNodeParameter('callbackUrl', index) as string;
+		const callbackSecretKey = this.getNodeParameter('callbackSecretKey', index, '') as string;
+		const allowDuplicates = this.getNodeParameter('allowDuplicates', index, false) as boolean;
 
-		const body: IDataObject = {
-			eventType,
-			callbackUrl,
-			blockchain,
-			network,
-		};
+		const body: IDataObject = { callbackUrl, allowDuplicates };
 		if (callbackSecretKey) body.callbackSecretKey = callbackSecretKey;
 
-		// Address-based events
-		const addressEvents = [
-			'UNCONFIRMED_COINS_TRANSACTION', 'CONFIRMED_COINS_TRANSACTION',
-			'UNCONFIRMED_TOKENS_TRANSACTION', 'CONFIRMED_TOKENS_TRANSACTION',
-			'UNCONFIRMED_INTERNAL_TRANSACTION', 'CONFIRMED_INTERNAL_TRANSACTION',
-		];
-		if (addressEvents.includes(eventType)) {
+		if (eventType !== 'block-mined') {
 			body.address = this.getNodeParameter('address', index) as string;
 		}
-
-		// Transaction confirmation events
-		if (eventType === 'TRANSACTION_CONFIRMATIONS') {
-			body.transactionId = this.getNodeParameter('transactionId', index) as string;
+		if (EVENT_TYPES_REQUIRING_CONFIRMATIONS_COUNT.has(eventType)) {
+			body.confirmationsCount = this.getNodeParameter('confirmationsCount', index) as number;
+		} else if (['address-coins-transactions-confirmed', 'address-tokens-transactions-confirmed', 'address-internal-transactions-confirmed'].includes(eventType)) {
+			const receiveCallbackOn = this.getNodeParameter('receiveCallbackOn', index, 0) as number;
+			if (receiveCallbackOn > 0) body.receiveCallbackOn = receiveCallbackOn;
 		}
 
 		const response = await cryptoApisRequest.call(this, {
-			method: 'POST',
-			endpoint: '/subscriptions',
-			body,
 			resource: 'blockchainEvents',
+			method: 'POST',
+			endpoint: `/blockchain-events/${blockchain}/${network}/${eventType}`,
+			body,
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
 
 	const blockchain = this.getNodeParameter('blockchain', index) as string;
 	const network = this.getNodeParameter('network', index) as string;
-	const basePath = `/subscriptions/${blockchain}/${network}`;
+	const basePath = `/blockchain-events/${blockchain}/${network}`;
 
 	if (operation === 'listSubscriptions') {
 		const returnAll = this.getNodeParameter('returnAll', index) as boolean;
@@ -84,11 +79,14 @@ export async function executeBlockchainEvents(
 	}
 
 	if (operation === 'activateSubscription') {
+		// Spec method is POST, not PUT. Spec requires the { data: { item: {} } } wrapper even
+		// though there are no actual fields -- pass an empty body object to trigger it.
 		const referenceId = this.getNodeParameter('referenceId', index) as string;
 		const response = await cryptoApisRequest.call(this, {
-			method: 'PUT',
+			method: 'POST',
 			endpoint: `${basePath}/${encodeURIComponent(referenceId)}/activate`,
 			resource: 'blockchainEvents',
+			body: {},
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
