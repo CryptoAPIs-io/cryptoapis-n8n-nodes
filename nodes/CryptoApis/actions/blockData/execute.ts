@@ -72,10 +72,11 @@ export async function executeBlockData(
 	}
 
 	if (operation === 'getLastMinedBlock') {
+		// Spec segment is latest/details, not last.
 		const response = await cryptoApisRequest.call(this, {
 			resource: 'blockData',
 			method: 'GET',
-			endpoint: `${basePath}/last`,
+			endpoint: `${basePath}/latest/details`,
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}

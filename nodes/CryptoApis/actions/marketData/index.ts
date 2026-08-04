@@ -65,7 +65,23 @@ export const marketDataFields: INodeProperties[] = [
 		},
 	},
 
-	// --- From/To Symbol (shared by getAssetDetailsBySymbol + getExchangeRateBySymbols) ---
+	// --- Asset Symbol (getAssetDetailsBySymbol -- single symbol, e.g. "BTC", not a pair) ---
+	{
+		displayName: 'Asset Symbol',
+		name: 'assetSymbol',
+		type: 'string',
+		required: true,
+		default: '',
+		placeholder: 'e.g. BTC',
+		description: "The asset's unique symbol in the Crypto APIs listings",
+		displayOptions: {
+			show: {
+				resource: ['marketData'],
+				operation: ['getAssetDetailsBySymbol'],
+			},
+		},
+	},
+	// --- From/To Symbol (getExchangeRateBySymbols -- genuinely a pair) ---
 	{
 		displayName: 'From Symbol',
 		name: 'fromSymbol',
@@ -77,7 +93,7 @@ export const marketDataFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['marketData'],
-				operation: ['getAssetDetailsBySymbol', 'getExchangeRateBySymbols'],
+				operation: ['getExchangeRateBySymbols'],
 			},
 		},
 	},
@@ -92,7 +108,7 @@ export const marketDataFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['marketData'],
-				operation: ['getAssetDetailsBySymbol', 'getExchangeRateBySymbols'],
+				operation: ['getExchangeRateBySymbols'],
 			},
 		},
 	},
