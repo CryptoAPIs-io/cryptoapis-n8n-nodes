@@ -6,7 +6,12 @@ import {
 	EVM_NETWORKS,
 	UTXO_BLOCKCHAINS,
 	UTXO_NETWORKS,
+	XRP_NETWORKS,
+	SOLANA_NETWORKS,
 } from '../../transport/blockchainConstants';
+
+/** Tezos is broadcast-capable per the spec (unlike Kaspa, which has no broadcast endpoint at all). */
+const TEZOS_NETWORKS = ['mainnet', 'shadownet'] as const;
 
 export const broadcastOperations: INodeProperties[] = [
 	{
@@ -18,6 +23,9 @@ export const broadcastOperations: INodeProperties[] = [
 		options: [
 			{ name: 'EVM', value: 'evm' },
 			{ name: 'UTXO', value: 'utxo' },
+			{ name: 'XRP', value: 'xrp' },
+			{ name: 'Solana', value: 'solana' },
+			{ name: 'Tezos', value: 'tezos' },
 		],
 		default: 'evm',
 	},
@@ -72,6 +80,36 @@ export const broadcastFields: INodeProperties[] = [
 		default: 'mainnet',
 		options: networkOptions(UTXO_NETWORKS),
 		displayOptions: { show: { resource: ['broadcast'], blockchainType: ['utxo'] } },
+	},
+	// Network (XRP)
+	{
+		displayName: 'Network',
+		name: 'network',
+		type: 'options',
+		required: true,
+		default: 'mainnet',
+		options: networkOptions(XRP_NETWORKS),
+		displayOptions: { show: { resource: ['broadcast'], blockchainType: ['xrp'] } },
+	},
+	// Network (Solana)
+	{
+		displayName: 'Network',
+		name: 'network',
+		type: 'options',
+		required: true,
+		default: 'mainnet',
+		options: networkOptions(SOLANA_NETWORKS),
+		displayOptions: { show: { resource: ['broadcast'], blockchainType: ['solana'] } },
+	},
+	// Network (Tezos)
+	{
+		displayName: 'Network',
+		name: 'network',
+		type: 'options',
+		required: true,
+		default: 'mainnet',
+		options: networkOptions(TEZOS_NETWORKS),
+		displayOptions: { show: { resource: ['broadcast'], blockchainType: ['tezos'] } },
 	},
 	{
 		displayName: 'Signed Transaction Hex',
