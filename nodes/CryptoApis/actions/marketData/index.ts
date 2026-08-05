@@ -22,19 +22,19 @@ export const marketDataOperations: INodeProperties[] = [
 				name: 'Get Asset Details by Symbol',
 				value: 'getAssetDetailsBySymbol',
 				description: 'Get detailed information about an asset by converting from one symbol to another',
-				action: 'Get asset price and details using symbols (e.g. BTC/USD)',
-			},
-			{
-				name: 'Get Exchange Rate by Asset Symbols',
-				value: 'getExchangeRateBySymbols',
-				description: 'Get exchange rate between two asset symbols (e.g. BTC to USD)',
-				action: 'Get exchange rate between two symbols (e.g. BTC to USD)',
+				action: 'Get asset price and details using a symbol',
 			},
 			{
 				name: 'Get Exchange Rate by Asset IDs',
 				value: 'getExchangeRateByIds',
 				description: 'Get exchange rate between two assets using their CryptoAPIs IDs',
-				action: 'Get exchange rate between two assets by their IDs',
+				action: 'Get exchange rate between two assets by their ids',
+			},
+			{
+				name: 'Get Exchange Rate by Asset Symbols',
+				value: 'getExchangeRateBySymbols',
+				description: 'Get exchange rate between two asset symbols (e.g. BTC to USD)',
+				action: 'Get exchange rate between two symbols',
 			},
 			{
 				name: 'List Supported Assets',

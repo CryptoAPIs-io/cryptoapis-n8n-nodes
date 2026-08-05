@@ -29,10 +29,10 @@ export const transactionsDataOperations: INodeProperties[] = [
 		displayOptions: { show: { resource: ['transactionsData'] } },
 		options: [
 			{ name: 'EVM', value: 'evm' },
-			{ name: 'UTXO', value: 'utxo' },
-			{ name: 'Solana', value: 'solana' },
-			{ name: 'XRP', value: 'xrp' },
 			{ name: 'Kaspa', value: 'kaspa' },
+			{ name: 'Solana', value: 'solana' },
+			{ name: 'UTXO', value: 'utxo' },
+			{ name: 'XRP', value: 'xrp' },
 		],
 		default: 'evm',
 	},
@@ -45,11 +45,11 @@ export const transactionsDataOperations: INodeProperties[] = [
 		// getTransactionDetails/getRawTransactionData, XRP/Solana/Kaspa only have getTransactionDetails.
 		displayOptions: { show: { resource: ['transactionsData'] } },
 		options: [
+			{ name: 'Get Raw Transaction Data', value: 'getRawTransactionData', description: 'Get raw hex of a UTXO transaction (UTXO only, not bitcoin-cash-zcash-only either -- excludes zcash)', action: 'Get raw hex of a UTXO transaction' },
 			{ name: 'Get Transaction Details', value: 'getTransactionDetails', description: 'Get detailed information about a specific transaction (all blockchain types)', action: 'Get details of a specific transaction' },
 			{ name: 'List Internal Transactions', value: 'listInternalTransactions', description: 'List internal transactions of an EVM transaction (EVM only)', action: 'List internal transactions of a transaction' },
-			{ name: 'List Token Transfers', value: 'listTokenTransfers', description: 'List token transfers of an EVM transaction (EVM only)', action: 'List token transfers of a transaction' },
 			{ name: 'List Logs', value: 'listLogs', description: 'List event logs of an EVM Ethereum transaction (Ethereum only, not other EVM chains)', action: 'List event logs of a transaction' },
-			{ name: 'Get Raw Transaction Data', value: 'getRawTransactionData', description: 'Get raw hex of a UTXO transaction (UTXO only, not bitcoin-cash-zcash-only either -- excludes zcash)', action: 'Get raw hex of a UTXO transaction' },
+			{ name: 'List Token Transfers', value: 'listTokenTransfers', description: 'List token transfers of an EVM transaction (EVM only)', action: 'List token transfers of a transaction' },
 		],
 		default: 'getTransactionDetails',
 	},

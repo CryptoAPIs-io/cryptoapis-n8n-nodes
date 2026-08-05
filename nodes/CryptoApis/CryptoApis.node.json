@@ -2,7 +2,7 @@
 	"node": "@cryptoapis-io/n8n-nodes-cryptoapis.cryptoApis",
 	"nodeVersion": "1.0",
 	"codexVersion": "1.0",
-	"categories": ["Development", "Core Nodes"],
+	"categories": ["Development", "Data & Storage"],
 	"resources": {
 		"primaryDocumentation": [
 			{
@@ -43,6 +43,8 @@
 		"sol",
 		"kaspa",
 		"kas",
+		"tezos",
+		"xtz",
 		"bitcoin cash",
 		"bch",
 		"litecoin",
@@ -96,6 +98,12 @@
 		"fraud detection",
 		"risk score",
 		"screen transaction",
-		"verify address"
+		"verify address",
+		"fa1.2",
+		"fa2",
+		"spl token",
+		"compute units",
+		"unspent outputs",
+		"utxo"
 	]
 }

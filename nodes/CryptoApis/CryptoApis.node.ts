@@ -3,8 +3,9 @@ import type {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
+	JsonObject,
 } from 'n8n-workflow';
-import { NodeConnectionTypes } from 'n8n-workflow';
+import { NodeApiError, NodeConnectionTypes } from 'n8n-workflow';
 import { router } from './actions/router';
 
 import { amlOperations, amlFields } from './actions/aml/index';
@@ -27,7 +28,10 @@ export class CryptoApis implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Crypto APIs',
 		name: 'cryptoApis',
-		icon: 'file:cryptoapis.svg',
+		// The wordmark is near-black (#020d1c), which all but disappears on n8n's
+		// dark theme; the dark variant lightens only that fill and leaves the
+		// brand blues untouched.
+		icon: { light: 'file:cryptoapis.svg', dark: 'file:cryptoapis.dark.svg' },
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
@@ -35,8 +39,8 @@ export class CryptoApis implements INodeType {
 		defaults: {
 			name: 'Crypto APIs',
 		},
-		inputs: ['main'],
-		outputs: ['main'],
+		inputs: [NodeConnectionTypes.Main],
+		outputs: [NodeConnectionTypes.Main],
 		usableAsTool: true,
 		credentials: [
 			{
@@ -56,12 +60,12 @@ export class CryptoApis implements INodeType {
 					{ name: 'AML', value: 'aml', description: 'Anti-Money Laundering risk checks for addresses and transactions' },
 					{ name: 'Block Data', value: 'blockData', description: 'Block details and block-level transactions' },
 					{ name: 'Blockchain Event', value: 'blockchainEvents', description: 'Webhook subscriptions for on-chain events' },
-					{ name: 'Blockchain Fee', value: 'blockchainFees', description: 'Fee recommendations, gas estimation, and Tezos fee estimates' },
+					{ name: 'Blockchain Fee', value: 'blockchainFees', description: 'Fee recommendations, gas estimation, and Tezos/Solana fee estimates' },
 					{ name: 'Broadcast', value: 'broadcast', description: 'Broadcast signed transactions to the network' },
 					{ name: 'Contract', value: 'contracts', description: 'Token details by contract address' },
 					{ name: 'HD Wallet', value: 'hdWallet', description: 'HD wallet sync, balances, and transactions' },
 					{ name: 'Market Data', value: 'marketData', description: 'Asset prices and exchange rates' },
-					{ name: 'Prepare Transaction', value: 'prepareTransactions', description: 'Build unsigned EVM and Tezos transactions' },
+					{ name: 'Prepare Transaction', value: 'prepareTransactions', description: 'Build unsigned transactions for EVM, Tezos, Solana, XRP, Kaspa and UTXO' },
 					{ name: 'Simulate', value: 'simulate', description: 'Dry-run Ethereum transactions' },
 					{ name: 'Transaction Data', value: 'transactionsData', description: 'Transaction details, internals, and logs' },
 					{ name: 'Utility', value: 'utils', description: 'Address validation, decoding, and derivation' },
@@ -120,7 +124,17 @@ export class CryptoApis implements INodeType {
 					});
 					continue;
 				}
-				throw error;
+				// cryptoApisRequest() already raises NodeApiError carrying the API's own
+				// error body, so re-wrapping one would bury that detail — pass it through
+				// unchanged and wrap only bare errors (a validation message, a transport
+				// failure). Bound to a local first because `throw error` on the catch
+				// parameter itself trips @n8n/community-nodes/require-node-api-error,
+				// which matches the identifier and cannot see the instanceof guard.
+				const failure =
+					error instanceof NodeApiError
+						? error
+						: new NodeApiError(this.getNode(), error as JsonObject);
+				throw failure;
 			}
 		}
 

@@ -36,7 +36,7 @@ nodes/CryptoApis/
     blockchainConstants.ts       # Blockchain/network lists, chain IDs, dropdown option builders
 ```
 
-The 13 resources are: `addressHistory`, `addressLatest`, `blockData`, `blockchainEvents`, `blockchainFees`, `broadcast`, `contracts`, `hdWallet`, `marketData`, `prepareTransactions`, `simulate`, `transactionsData`, `utils`.
+The 14 resources are: `addressHistory`, `addressLatest`, `aml`, `blockData`, `blockchainEvents`, `blockchainFees`, `broadcast`, `contracts`, `hdWallet`, `marketData`, `prepareTransactions`, `simulate`, `transactionsData`, `utils`.
 
 ## Key Patterns and Conventions
 

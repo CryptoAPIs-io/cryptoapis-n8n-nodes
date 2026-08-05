@@ -8,10 +8,13 @@ import {
 	UTXO_NETWORKS,
 	XRP_NETWORKS,
 	SOLANA_NETWORKS,
+	TEZOS_NETWORKS,
 } from '../../transport/blockchainConstants';
 
-/** Tezos is broadcast-capable per the spec (unlike Kaspa, which has no broadcast endpoint at all). */
-const TEZOS_NETWORKS = ['mainnet', 'shadownet'] as const;
+// The broadcast endpoint accepts 18 chains: bitcoin, bitcoin-cash, litecoin, dogecoin,
+// dash, ethereum, ethereum-classic, zcash, binance-smart-chain, xrp, tron, polygon,
+// arbitrum, avalanche, base, optimism, solana, tezos. Notably NOT kaspa — the API
+// rejects it with invalid_data naming the valid list (verified live).
 
 export const broadcastOperations: INodeProperties[] = [
 	{
@@ -22,10 +25,10 @@ export const broadcastOperations: INodeProperties[] = [
 		displayOptions: { show: { resource: ['broadcast'] } },
 		options: [
 			{ name: 'EVM', value: 'evm' },
-			{ name: 'UTXO', value: 'utxo' },
-			{ name: 'XRP', value: 'xrp' },
 			{ name: 'Solana', value: 'solana' },
 			{ name: 'Tezos', value: 'tezos' },
+			{ name: 'UTXO', value: 'utxo' },
+			{ name: 'XRP', value: 'xrp' },
 		],
 		default: 'evm',
 	},
