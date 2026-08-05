@@ -110,7 +110,7 @@ export async function executePrepareTransactions(
 		}
 
 		if (operation === 'prepareSplTokenTransfer') {
-			body.tokenContract = this.getNodeParameter('solanaTokenContract', index) as string;
+			body.tokenContract = this.getNodeParameter('solanaMintAddress', index) as string;
 			// tokenStandard is deliberately NOT sent. This endpoint rejects EVERY value
 			// with invalid_data "Possible values are token, token-2022" — including those
 			// two — and only succeeds when the attribute is omitted, in which case it

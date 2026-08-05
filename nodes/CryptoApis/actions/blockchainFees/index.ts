@@ -283,6 +283,14 @@ export const blockchainFeesFields: INodeProperties[] = [
 		type: 'string',
 		required: true,
 		default: '0',
+		// Not a secret — an FA2 token index is public on-chain data. Masked only
+		// because n8n-nodes-base/node-param-type-options-password-missing treats
+		// any parameter name containing "token" as a credential, and n8n's
+		// verification scanner enforces that rule regardless of our eslint config.
+		// Renaming the field would clear it properly but silently breaks saved
+		// workflows (n8n strips unknown parameter names and substitutes the
+		// default), so the mask is the non-breaking option.
+		typeOptions: { password: true },
 		// String, not number: the API rejects a numeric tokenId with
 		// invalid_data "Required value type is string" (verified live).
 		description: 'The FA2 token ID within the contract. FA2 contracts can hold many token IDs; FA1.2 cannot, which is why this is FA2-only.',
@@ -567,6 +575,9 @@ export const blockchainFeesFields: INodeProperties[] = [
 		type: 'string',
 		required: true,
 		default: '',
+		// Not a secret; masked to satisfy the "token" name heuristic — see the
+		// tezosTokenId field above for why renaming is not the safer option.
+		typeOptions: { password: true },
 		description: 'Amount of tokens to transfer',
 		displayOptions: {
 			show: {

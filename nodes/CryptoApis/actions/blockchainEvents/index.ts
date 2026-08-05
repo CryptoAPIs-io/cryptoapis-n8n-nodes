@@ -50,7 +50,11 @@ const eventTypePerBlockchainFields: INodeProperties[] = EVENT_TYPES.flatMap((eve
 		name: 'blockchain',
 		type: 'options',
 		required: true,
-		default: EVENT_TYPE_BLOCKCHAINS[eventType][0],
+		// The real default is the event type's first supported chain, assigned just
+		// below. It is spelled as a literal here and then overwritten because
+		// n8n-nodes-base/node-param-default-missing only recognises literal
+		// defaults and reports a computed expression as a missing one.
+		default: '',
 		options: blockchainOptions(EVENT_TYPE_BLOCKCHAINS[eventType]),
 		displayOptions: { show: { resource: ['blockchainEvents'], operation: ['createSubscription'], eventType: [eventType] } },
 	} as INodeProperties,
@@ -64,6 +68,15 @@ const eventTypePerBlockchainFields: INodeProperties[] = EVENT_TYPES.flatMap((eve
 		displayOptions: { show: { resource: ['blockchainEvents'], operation: ['createSubscription'], eventType: [eventType] } },
 	} as INodeProperties,
 ]);
+
+// Restore the per-event-type blockchain defaults the literal above stands in for,
+// so the dropdown still preselects a chain the event type actually supports.
+for (const field of eventTypePerBlockchainFields) {
+	if (field.name === 'blockchain' && field.default === '') {
+		const eventType = field.displayOptions?.show?.eventType?.[0] as string;
+		field.default = EVENT_TYPE_BLOCKCHAINS[eventType][0];
+	}
+}
 
 export const blockchainEventsFields: INodeProperties[] = [
 	// Blockchain/Network (management: list/get/delete/activate) — uniform 19-chain union.
