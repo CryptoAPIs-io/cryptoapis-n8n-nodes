@@ -1,15 +1,57 @@
+# Publishes this n8n community node package to npm.
+#
+# n8n requires all community nodes to be published via GitHub Actions with npm
+# provenance (mandatory since 1 May 2026). Provenance lets anyone verify
+# cryptographically that a package was built by this workflow, from this exact
+# repository and commit. `@n8n/scan-community-package` checks it, and a package
+# published from a laptop can never become a verified community node.
+#
+# npm auth uses OIDC Trusted Publishing — there is no NPM_TOKEN secret in this
+# repository and there should not be. It is configured on npmjs.com under the
+# package's Trusted Publishers (repository + workflow name `publish.yml`).
+#
+# Public access and provenance are declared in package.json `publishConfig`
+# rather than as `npm publish` flags, because the release step below runs a bare
+# `npm publish` via @n8n/node-cli.
+#
+# ─── RELEASE PROCESS ──────────────────────────────────────────────────────────
+#
+#   git checkout main && git merge --ff-only github/main
+#   npm run release
+#
+# `npm run release` (n8n-node release) lints, builds, prompts for the version
+# bump, regenerates CHANGELOG.md, commits, tags `vX.Y.Z`, pushes, and creates the
+# GitHub release. Pushing that tag is what triggers this workflow.
+#
+# It MUST run from `main`, whose upstream is the GitHub remote: the CLI passes
+# `--git.requireBranch main`, and release-it pushes to the current branch's
+# upstream — so running it from `master` (Bitbucket) fails the branch check and
+# would target the wrong host. `master` stays the working branch; see CLAUDE.md
+# for the dual-remote workflow.
+#
+# Both a `v*.*.*` tag push and `release: created` are accepted, so a release
+# created by hand in the GitHub UI still publishes.
+
 name: Publish to npm
 
 on:
+  push:
+    tags:
+      - 'v*.*.*'
   release:
     types: [created]
 
 jobs:
   publish:
+    name: Publish to npm
     runs-on: ubuntu-latest
+
     permissions:
-      contents: read
+      # Required to mint the OIDC token that signs the provenance attestation.
       id-token: write
+      # Least privilege: publishing needs no write access to repository contents.
+      contents: read
+
     steps:
       - uses: actions/checkout@v4
 
@@ -17,9 +59,11 @@ jobs:
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
+          cache: npm
 
       - run: npm ci
 
-      - run: npm run build
-
-      - run: npm publish --provenance --access public
+      # Runs lint + build, then publishes with NPM_CONFIG_PROVENANCE=true.
+      # @n8n/node-cli detects CI via GITHUB_ACTIONS and takes the publish path
+      # instead of the interactive one.
+      - run: npm run release
