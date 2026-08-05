@@ -130,11 +130,11 @@ API version `2024-12-12` is sent as `x-api-version` header on all requests.
 | `marketData` | get-asset-details-by-id, get-asset-details-by-symbol, list-assets, get-exchange-rate, list-exchange-rates |
 | `addressLatest` | get-balance, list-transactions, list-token-transfers, list-internal-transactions, get-next-nonce (EVM/UTXO/Solana/XRP/Kaspa) |
 | `blockData` | get-block-by-height, get-block-by-hash, list-transactions-by-block, get-last-mined-block (EVM/UTXO/XRP) |
-| `blockchainFees` | get-fee-recommendations, get-eip-1559-fees, estimate-gas (EVM/UTXO/XRP) |
+| `blockchainFees` | get-fee-recommendations, get-eip-1559-fees, estimate-gas (EVM/UTXO/XRP); Tezos estimate-transfer / estimate-fa12-transfer / estimate-fa2-transfer |
 | `transactionsData` | get-transaction-details, list-internal-transactions, list-token-transfers, list-logs (EVM/UTXO/Solana/XRP/Kaspa) |
 | `hdWallet` | sync, activate, delete, get-status, get-balance, list-transactions, list-token-transfers (EVM/UTXO/XRP) |
 | `addressHistory` | get-statistics, list-transactions, list-token-transfers, list-internal-transactions (EVM/UTXO) |
-| `prepareTransactions` | prepare-transaction, prepare-token-transfer (EVM incl. Tron via dedicated endpoints) |
+| `prepareTransactions` | prepare-transaction, prepare-token-transfer (EVM incl. Tron via dedicated endpoints); Tezos native-coins / fa1-2-tokens / fa2-tokens. A `blockchainType` selector (evm\|tezos) gates the two field sets; it defaults to `evm` so pre-existing workflows are unaffected. |
 | `simulate` | simulate-transaction (Ethereum only — the endpoint has no blockchain parameter) |
 | `broadcast` | broadcast-signed-transaction (EVM/UTXO/XRP/Solana/Tezos) |
 | `blockchainEvents` | create-event, list-events, delete-event (webhooks) |

@@ -35,8 +35,8 @@ export class CryptoApis implements INodeType {
 		defaults: {
 			name: 'Crypto APIs',
 		},
-		inputs: [NodeConnectionTypes.Main],
-		outputs: [NodeConnectionTypes.Main],
+		inputs: ['main'],
+		outputs: ['main'],
 		usableAsTool: true,
 		credentials: [
 			{
@@ -51,17 +51,17 @@ export class CryptoApis implements INodeType {
 				type: 'options',
 				noDataExpression: true,
 				options: [
-					{ name: 'AML', value: 'aml', description: 'Anti-Money Laundering risk checks for addresses and transactions' },
 					{ name: 'Address History', value: 'addressHistory', description: 'Full transaction history for synced addresses' },
 					{ name: 'Address Latest', value: 'addressLatest', description: 'Current balances and recent transactions' },
+					{ name: 'AML', value: 'aml', description: 'Anti-Money Laundering risk checks for addresses and transactions' },
 					{ name: 'Block Data', value: 'blockData', description: 'Block details and block-level transactions' },
 					{ name: 'Blockchain Event', value: 'blockchainEvents', description: 'Webhook subscriptions for on-chain events' },
-					{ name: 'Blockchain Fee', value: 'blockchainFees', description: 'Fee recommendations and gas estimation' },
+					{ name: 'Blockchain Fee', value: 'blockchainFees', description: 'Fee recommendations, gas estimation, and Tezos fee estimates' },
 					{ name: 'Broadcast', value: 'broadcast', description: 'Broadcast signed transactions to the network' },
 					{ name: 'Contract', value: 'contracts', description: 'Token details by contract address' },
 					{ name: 'HD Wallet', value: 'hdWallet', description: 'HD wallet sync, balances, and transactions' },
 					{ name: 'Market Data', value: 'marketData', description: 'Asset prices and exchange rates' },
-					{ name: 'Prepare Transaction', value: 'prepareTransactions', description: 'Build unsigned EVM transactions' },
+					{ name: 'Prepare Transaction', value: 'prepareTransactions', description: 'Build unsigned EVM and Tezos transactions' },
 					{ name: 'Simulate', value: 'simulate', description: 'Dry-run Ethereum transactions' },
 					{ name: 'Transaction Data', value: 'transactionsData', description: 'Transaction details, internals, and logs' },
 					{ name: 'Utility', value: 'utils', description: 'Address validation, decoding, and derivation' },

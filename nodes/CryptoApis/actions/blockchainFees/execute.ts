@@ -19,6 +19,66 @@ export async function executeBlockchainFees(
 		return [{ json: unwrapSingleItem(response) }];
 	}
 
+	if (blockchainType === 'tezos') {
+		// Like XRP, the Tezos paths carry no blockchain segment:
+		// /blockchain-fees/tezos/{network}/... — so blockchainType IS the chain.
+		if (operation === 'getFeeRecommendations') {
+			const response = await cryptoApisRequest.call(this, {
+				resource: 'blockchainFees',
+				method: 'GET',
+				endpoint: `/blockchain-fees/tezos/${network}/mempool`,
+			});
+			return [{ json: unwrapSingleItem(response) }];
+		}
+
+		// The three estimate operations share sender/recipient/amount; senderPublicKey is
+		// optional and only matters for an unrevealed sender (adds the reveal cost).
+		const sender = this.getNodeParameter('tezosSender', index) as string;
+		const recipient = this.getNodeParameter('tezosRecipient', index) as string;
+		const amount = this.getNodeParameter('tezosAmount', index) as string;
+		const senderPublicKey = this.getNodeParameter('tezosSenderPublicKey', index, '') as string;
+
+		const body: IDataObject = { sender, recipient, amount };
+		if (senderPublicKey) {
+			body.senderPublicKey = senderPublicKey;
+		}
+
+		if (operation === 'estimateTransferFee') {
+			const response = await cryptoApisRequest.call(this, {
+				resource: 'blockchainFees',
+				method: 'POST',
+				endpoint: `/blockchain-fees/tezos/${network}/estimate-transfer`,
+				body,
+			});
+			return [{ json: unwrapSingleItem(response) }];
+		}
+
+		if (operation === 'estimateFa12TransferFee') {
+			body.contractAddress = this.getNodeParameter('tezosContractAddress', index) as string;
+			const response = await cryptoApisRequest.call(this, {
+				resource: 'blockchainFees',
+				method: 'POST',
+				endpoint: `/blockchain-fees/tezos/${network}/estimate-fa12-transfer`,
+				body,
+			});
+			return [{ json: unwrapSingleItem(response) }];
+		}
+
+		if (operation === 'estimateFa2TransferFee') {
+			body.contractAddress = this.getNodeParameter('tezosContractAddress', index) as string;
+			body.tokenId = this.getNodeParameter('tezosTokenId', index) as string;
+			const response = await cryptoApisRequest.call(this, {
+				resource: 'blockchainFees',
+				method: 'POST',
+				endpoint: `/blockchain-fees/tezos/${network}/estimate-fa2-transfer`,
+				body,
+			});
+			return [{ json: unwrapSingleItem(response) }];
+		}
+
+		throw new Error(`Unsupported Tezos Blockchain Fees operation: ${operation}`);
+	}
+
 	const blockchain = this.getNodeParameter('blockchain', index) as string;
 
 	if (operation === 'getFeeRecommendations') {
