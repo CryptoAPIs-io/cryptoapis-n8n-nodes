@@ -15,6 +15,7 @@ npm install               # install dependencies
 npm run build             # compile TypeScript + copy icons (tsc && gulp build:icons)
 npm run dev               # watch mode (tsc --watch)
 npm run lint              # type-check only (tsc --noEmit)
+npm run check-enums       # enum drift guard vs the published OpenAPI spec
 npm run prepublishOnly    # runs build before publish
 ```
 

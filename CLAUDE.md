@@ -9,9 +9,12 @@ npm install          # install dependencies
 npm run build        # tsc + gulp build:icons (copies SVGs to dist/)
 npm run dev          # tsc --watch for iterative development
 npm run lint         # tsc --noEmit (type-check only, no emit)
+npm run check-enums  # compare the per-endpoint blockchain/network enums against the published OpenAPI spec
 ```
 
-There are no automated tests. Type-checking via `npm run lint` is the primary validation step.
+There are no automated tests. Type-checking via `npm run lint` is the primary validation step, and
+`npm run check-enums` guards the hand-maintained blockchain/network enums against API drift (see
+"Blockchain/network handling" below).
 
 Publishing is automated via GitHub Actions on release creation (`publish.yml`) using npm trusted publishing with provenance.
 
@@ -80,6 +83,20 @@ Both helpers accept `returnAll: boolean` and `limit: number`. When `returnAll=fa
 - `getChainIdForNetwork()` for EVM chain ID lookups.
 
 Always import from `blockchainConstants.ts` rather than hardcoding blockchain or network strings.
+
+**Per-endpoint enums.** The API declares blockchain/network support PER ENDPOINT, not globally — three
+endpoints in the same product can accept 2, 5 and 9 chains. A resource whose support genuinely differs
+per operation therefore keeps its own `actions/<resource>/blockchainEnums.ts` rather than reusing the
+wide global constants, and each operation's dropdown points at its own enum.
+
+`npm run check-enums` (`scripts/check-enum-drift.mjs`) compares those declared enums against the
+**published** OpenAPI document and reports drift in both directions — a chain the node offers but the
+API rejects, and a chain the API supports but the node hides. Its exit code is the drift count, so CI
+can gate on it. Add a row to `MAPPINGS` whenever you add an enum.
+
+> Fetch the spec from `https://developers.cryptoapis.io/openapi.json`. A locally-saved copy goes stale
+> fast — one such file had 119 paths and no Tezos at all while the published document had 143 paths and
+> 7 Tezos endpoints, which makes the node look wrong when it is actually correct.
 
 ### TypeScript
 
