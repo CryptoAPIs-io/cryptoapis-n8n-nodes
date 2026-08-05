@@ -14,11 +14,29 @@ An [n8n](https://n8n.io/) community node package (`@cryptoapis-io/n8n-nodes-cryp
 npm install               # install dependencies
 npm run build             # compile TypeScript + copy icons (tsc && gulp build:icons)
 npm run dev               # watch mode (tsc --watch)
-npm run lint              # type-check only (tsc --noEmit)
+npm run lint              # tsc --noEmit && eslint .  — the real gate; run this
+npm run typecheck         # tsc --noEmit only
+npm run lint:scan         # n8n-node lint (the CLI's own rule set)
+npm run release           # cut a release (run from `main`) — see Release below
 npm run prepublishOnly    # runs build before publish
 ```
 
-Tests are not yet set up. Linting is type-check only (no ESLint/Prettier configured).
+Tests are not yet set up; `npm run lint` is the primary validation step, and it is
+also the gate the release flow runs before publishing. It must stay the real
+linter — it was `tsc --noEmit` alone, which reported clean while n8n's
+verification scanner found 10 errors.
+
+Note that `npx eslint .` is weaker than n8n's actual gate:
+`@n8n/scan-community-package` builds its own ESLint config, ignores
+`.eslintrc.js`, and loads `@n8n/eslint-plugin-community-nodes`. To check the
+published package the way n8n's reviewers do:
+
+```bash
+npx @n8n/scan-community-package @cryptoapis-io/n8n-nodes-cryptoapis
+```
+
+**Never run `eslint --fix` here** — verified destructive twice, including
+rewriting `xPub` → "x pub" and `EIP-1559` → "eip 1559". Fix findings by hand.
 
 ## Architecture
 
@@ -146,4 +164,19 @@ This repo has two remotes with separate histories:
 
 ## Release
 
-GitHub Actions workflow (`.github/workflows/publish.yml`): triggers on GitHub release creation, runs `npm publish --provenance --access public` with Node 20.
+Managed by `@n8n/node-cli` so the repository and npm stay in sync and every release carries notes:
+
+```bash
+git checkout main && git merge --ff-only github/main
+npm run release
+```
+
+Lints, builds, prompts for the bump, regenerates `CHANGELOG.md`, commits, tags `vX.Y.Z`, pushes, and creates the GitHub release. The tag push triggers `.github/workflows/publish.yml` (Node 24), which publishes with provenance via OIDC trusted publishing — there is no `NPM_TOKEN` secret, and there should not be. `publishConfig` carries `access: public` and `provenance: true` because the CLI's CI path runs a bare `npm publish`.
+
+Constraints, each verified the hard way:
+
+- **Release from `main`, not `master`.** The CLI passes `--git.requireBranch main`, and release-it pushes to the current branch's upstream; `master` tracks Bitbucket. `.release-it.json` cannot override it — CLI args win over config.
+- **`release-it` is pinned to `^20`** — release-it 21 rejects the `-n` flag the CLI passes, so `n8n-node release` cannot run against it.
+- **Never publish from a laptop** (`n8n-node release --publish`). Since 1 May 2026 n8n requires Actions-published provenance; a locally published package can never become verified.
+- **npm never allows republishing a version** — a bump is always required.
+- `auto-changelog` link URLs are set explicitly in `package.json`: the `github` remote is an SSH host *alias*, so derived links would point at a non-existent host, and `origin` is Bitbucket, whose links 404 for public readers.
