@@ -1,5 +1,5 @@
 import type { INodeProperties } from 'n8n-workflow';
-import { blockchainOptions, networkOptions, XRP_NETWORKS } from '../../transport/blockchainConstants';
+import { blockchainOptions, networkOptions, XRP_NETWORKS, TEZOS_NETWORKS } from '../../transport/blockchainConstants';
 import {
 	EVM_MEMPOOL_BLOCKCHAINS,
 	EVM_MEMPOOL_NETWORKS,
@@ -26,6 +26,7 @@ export const blockchainFeesOperations: INodeProperties[] = [
 		displayOptions: { show: { resource: ['blockchainFees'] } },
 		options: [
 			{ name: 'EVM', value: 'evm' },
+			{ name: 'Tezos', value: 'tezos' },
 			{ name: 'UTXO', value: 'utxo' },
 			{ name: 'XRP', value: 'xrp' },
 		],
@@ -44,6 +45,9 @@ export const blockchainFeesOperations: INodeProperties[] = [
 			{ name: 'Estimate Token Transfer Gas', value: 'estimateTokenTransferGas', description: 'Estimate gas for a token transfer — ERC-20/ERC-721 (EVM only)', action: 'Estimate gas for a token transfer (ERC-20/ERC-721)' },
 			{ name: 'Estimate Contract Interaction Gas', value: 'estimateContractInteractionGas', description: 'Estimate gas for a contract interaction using calldata (EVM only)', action: 'Estimate gas for a contract interaction' },
 			{ name: 'Estimate Transaction Smart Fee', value: 'estimateTransactionSmartFee', description: 'Estimate smart fee for a UTXO transaction with confirmation target (UTXO only)', action: 'Estimate smart fee for a UTXO transaction' },
+			{ name: 'Estimate Transfer Fee', value: 'estimateTransferFee', description: 'Estimate the fee for a native XTZ transfer (Tezos only)', action: 'Estimate the fee for a native XTZ transfer' },
+			{ name: 'Estimate FA1.2 Transfer Fee', value: 'estimateFa12TransferFee', description: 'Estimate the fee for an FA1.2 token transfer (Tezos only)', action: 'Estimate the fee for an FA1.2 token transfer' },
+			{ name: 'Estimate FA2 Transfer Fee', value: 'estimateFa2TransferFee', description: 'Estimate the fee for an FA2 token transfer (Tezos only)', action: 'Estimate the fee for an FA2 token transfer' },
 		],
 		default: 'getFeeRecommendations',
 	},
@@ -191,6 +195,114 @@ export const blockchainFeesFields: INodeProperties[] = [
 		default: 'mainnet',
 		options: networkOptions(XRP_NETWORKS),
 		displayOptions: { show: { resource: ['blockchainFees'], blockchainType: ['xrp'] } },
+	},
+
+	// Network (Tezos) — like XRP, the path carries no separate blockchain segment
+	// (/blockchain-fees/tezos/{network}/...), so blockchainType IS the chain.
+	{
+		displayName: 'Network',
+		name: 'network',
+		type: 'options',
+		required: true,
+		default: 'mainnet',
+		options: networkOptions(TEZOS_NETWORKS),
+		displayOptions: { show: { resource: ['blockchainFees'], blockchainType: ['tezos'] } },
+	},
+
+	// --- Tezos fee-estimate fields ---
+	// Shared by all three estimate operations. `senderPublicKey` is optional: the API
+	// needs it only when the sender account is still unrevealed on-chain, in which case
+	// the reveal operation's cost is included in the estimate.
+	{
+		displayName: 'Sender',
+		name: 'tezosSender',
+		type: 'string',
+		required: true,
+		default: '',
+		description: 'The address sending the funds',
+		displayOptions: {
+			show: {
+				resource: ['blockchainFees'],
+				blockchainType: ['tezos'],
+				operation: ['estimateTransferFee', 'estimateFa12TransferFee', 'estimateFa2TransferFee'],
+			},
+		},
+	},
+	{
+		displayName: 'Recipient',
+		name: 'tezosRecipient',
+		type: 'string',
+		required: true,
+		default: '',
+		description: 'The address receiving the funds',
+		displayOptions: {
+			show: {
+				resource: ['blockchainFees'],
+				blockchainType: ['tezos'],
+				operation: ['estimateTransferFee', 'estimateFa12TransferFee', 'estimateFa2TransferFee'],
+			},
+		},
+	},
+	{
+		displayName: 'Amount',
+		name: 'tezosAmount',
+		type: 'string',
+		required: true,
+		default: '',
+		description: 'Amount to transfer, as a decimal string',
+		displayOptions: {
+			show: {
+				resource: ['blockchainFees'],
+				blockchainType: ['tezos'],
+				operation: ['estimateTransferFee', 'estimateFa12TransferFee', 'estimateFa2TransferFee'],
+			},
+		},
+	},
+	{
+		displayName: 'Contract Address',
+		name: 'tezosContractAddress',
+		type: 'string',
+		required: true,
+		default: '',
+		description: 'The FA1.2/FA2 token contract address (KT1…)',
+		displayOptions: {
+			show: {
+				resource: ['blockchainFees'],
+				blockchainType: ['tezos'],
+				operation: ['estimateFa12TransferFee', 'estimateFa2TransferFee'],
+			},
+		},
+	},
+	{
+		displayName: 'Token ID',
+		name: 'tezosTokenId',
+		type: 'string',
+		required: true,
+		default: '0',
+		// String, not number: the API rejects a numeric tokenId with
+		// invalid_data "Required value type is string" (verified live).
+		description: 'The FA2 token ID within the contract. FA2 contracts can hold many token IDs; FA1.2 cannot, which is why this is FA2-only.',
+		displayOptions: {
+			show: {
+				resource: ['blockchainFees'],
+				blockchainType: ['tezos'],
+				operation: ['estimateFa2TransferFee'],
+			},
+		},
+	},
+	{
+		displayName: 'Sender Public Key',
+		name: 'tezosSenderPublicKey',
+		type: 'string',
+		default: '',
+		description: 'Only needed when the sender account is not yet revealed on-chain — the estimate then includes the reveal cost',
+		displayOptions: {
+			show: {
+				resource: ['blockchainFees'],
+				blockchainType: ['tezos'],
+				operation: ['estimateTransferFee', 'estimateFa12TransferFee', 'estimateFa2TransferFee'],
+			},
+		},
 	},
 
 	// --- EVM Estimate Gas fields ---

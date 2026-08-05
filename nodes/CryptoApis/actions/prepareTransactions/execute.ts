@@ -6,6 +6,69 @@ export async function executePrepareTransactions(
 	index: number,
 ): Promise<INodeExecutionData[]> {
 	const operation = this.getNodeParameter('operation', index) as string;
+	// Default to 'evm' so workflows saved before this selector existed keep their old
+	// behaviour instead of failing on a missing parameter.
+	const blockchainType = this.getNodeParameter('blockchainType', index, 'evm') as string;
+
+	// Tezos must be handled BEFORE the EVM parameter reads below: its path carries no
+	// blockchain segment (/prepare-transactions/tezos/{network}/...) and it uses its own
+	// field set, so the EVM-gated fields do not exist on the node for this branch.
+	if (blockchainType === 'tezos') {
+		const network = this.getNodeParameter('tezosNetwork', index) as string;
+		const fromAddress = this.getNodeParameter('tezosFromAddress', index) as string;
+		const toAddress = this.getNodeParameter('tezosToAddress', index) as string;
+		const amount = this.getNodeParameter('tezosPrepareAmount', index) as string;
+		const fromPublicKey = this.getNodeParameter('tezosFromPublicKey', index, '') as string;
+		const feePriority = this.getNodeParameter('tezosFeePriority', index, 'standard') as string;
+
+		// Tezos nests the priority under feeOptions (not `fee`, as EVM does).
+		const body: IDataObject = {
+			fromAddress,
+			toAddress,
+			amount,
+			feeOptions: { priority: feePriority },
+		};
+		if (fromPublicKey) body.fromPublicKey = fromPublicKey;
+
+		if (operation === 'prepareTezosNativeCoinTransfer') {
+			const response = await cryptoApisRequest.call(this, {
+				method: 'POST',
+				endpoint: `/prepare-transactions/tezos/${network}/native-coins`,
+				body,
+				resource: 'prepareTransactions',
+			});
+			return [{ json: unwrapSingleItem(response) }];
+		}
+
+		if (operation === 'prepareFa12TokenTransfer') {
+			body.contractAddress = this.getNodeParameter('tezosPrepareContractAddress', index) as string;
+			// tokenStandard is a required literal on these endpoints, not a user choice.
+			body.tokenStandard = 'FA_1_2';
+			const response = await cryptoApisRequest.call(this, {
+				method: 'POST',
+				endpoint: `/prepare-transactions/tezos/${network}/fa1-2-tokens`,
+				body,
+				resource: 'prepareTransactions',
+			});
+			return [{ json: unwrapSingleItem(response) }];
+		}
+
+		if (operation === 'prepareFa2TokenTransfer') {
+			body.contractAddress = this.getNodeParameter('tezosPrepareContractAddress', index) as string;
+			body.tokenId = this.getNodeParameter('tezosPrepareTokenId', index) as string;
+			body.tokenStandard = 'FA_2';
+			const response = await cryptoApisRequest.call(this, {
+				method: 'POST',
+				endpoint: `/prepare-transactions/tezos/${network}/fa2-tokens`,
+				body,
+				resource: 'prepareTransactions',
+			});
+			return [{ json: unwrapSingleItem(response) }];
+		}
+
+		throw new Error(`Unsupported Tezos Prepare Transactions operation: ${operation}`);
+	}
+
 	const blockchain = this.getNodeParameter('blockchain', index) as string;
 	const network = this.getNodeParameter('network', index) as string;
 	const fromAddress = this.getNodeParameter('fromAddress', index) as string;
