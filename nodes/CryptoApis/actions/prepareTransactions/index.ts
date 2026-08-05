@@ -82,7 +82,7 @@ export const prepareTransactionsOperations: INodeProperties[] = [
 		noDataExpression: true,
 		displayOptions: { show: { resource: ['prepareTransactions'], blockchainType: ['evm'] } },
 		options: [
-			{ name: 'Prepare Native Coin Transfer', value: 'prepareNativeCoinTransfer', description: 'Build an unsigned native coin transfer transaction', action: 'Build an unsigned native coin transfer (ETH, BNB, etc.)' },
+			{ name: 'Prepare Native Coin Transfer', value: 'prepareNativeCoinTransfer', description: 'Build an unsigned native coin transfer transaction', action: 'Build an unsigned native coin transfer' },
 			{ name: 'Prepare Fungible Token Transfer', value: 'prepareFungibleTokenTransfer', description: 'Build an unsigned ERC-20 token transfer', action: 'Build an unsigned ERC-20 token transfer' },
 			{ name: 'Prepare NFT Transfer', value: 'prepareNftTransfer', description: 'Build an unsigned ERC-721 NFT transfer', action: 'Build an unsigned ERC-721 NFT transfer' },
 		],
