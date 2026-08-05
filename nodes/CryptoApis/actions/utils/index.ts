@@ -8,6 +8,11 @@ import {
 	UTXO_NETWORKS,
 	XRP_NETWORKS,
 } from '../../transport/blockchainConstants';
+import {
+	EVM_VALIDATE_ADDRESS_BLOCKCHAINS,
+	EVM_VALIDATE_ADDRESS_NETWORKS,
+	EVM_DECODE_RAW_TRANSACTION_BLOCKCHAINS,
+} from './blockchainEnums';
 
 export const utilsOperations: INodeProperties[] = [
 	{
@@ -43,14 +48,34 @@ export const utilsOperations: INodeProperties[] = [
 
 export const utilsFields: INodeProperties[] = [
 	// --- EVM fields ---
+	// validateAddress and decodeRawTransaction support narrower chain sets than deriveAddresses
+	// (which uses the full EVM_BLOCKCHAINS union) — see ./blockchainEnums.ts.
 	{
 		displayName: 'Blockchain',
 		name: 'blockchain',
 		type: 'options',
 		required: true,
 		default: 'ethereum',
-		options: blockchainOptions(EVM_BLOCKCHAINS),
-		displayOptions: { show: { resource: ['utils'], blockchainType: ['evm'] } },
+		options: blockchainOptions(EVM_VALIDATE_ADDRESS_BLOCKCHAINS),
+		displayOptions: { show: { resource: ['utils'], blockchainType: ['evm'], operation: ['validateAddress'] } },
+	},
+	{
+		displayName: 'Network',
+		name: 'network',
+		type: 'options',
+		required: true,
+		default: 'mainnet',
+		options: networkOptions(EVM_VALIDATE_ADDRESS_NETWORKS),
+		displayOptions: { show: { resource: ['utils'], blockchainType: ['evm'], operation: ['validateAddress'] } },
+	},
+	{
+		displayName: 'Blockchain',
+		name: 'blockchain',
+		type: 'options',
+		required: true,
+		default: 'ethereum',
+		options: blockchainOptions(EVM_DECODE_RAW_TRANSACTION_BLOCKCHAINS),
+		displayOptions: { show: { resource: ['utils'], blockchainType: ['evm'], operation: ['decodeRawTransaction'] } },
 	},
 	{
 		displayName: 'Network',
@@ -59,7 +84,25 @@ export const utilsFields: INodeProperties[] = [
 		required: true,
 		default: 'mainnet',
 		options: networkOptions(EVM_NETWORKS),
-		displayOptions: { show: { resource: ['utils'], blockchainType: ['evm'] } },
+		displayOptions: { show: { resource: ['utils'], blockchainType: ['evm'], operation: ['decodeRawTransaction'] } },
+	},
+	{
+		displayName: 'Blockchain',
+		name: 'blockchain',
+		type: 'options',
+		required: true,
+		default: 'ethereum',
+		options: blockchainOptions(EVM_BLOCKCHAINS),
+		displayOptions: { show: { resource: ['utils'], blockchainType: ['evm'], operation: ['deriveAddresses'] } },
+	},
+	{
+		displayName: 'Network',
+		name: 'network',
+		type: 'options',
+		required: true,
+		default: 'mainnet',
+		options: networkOptions(EVM_NETWORKS),
+		displayOptions: { show: { resource: ['utils'], blockchainType: ['evm'], operation: ['deriveAddresses'] } },
 	},
 
 	// --- UTXO fields ---
@@ -137,6 +180,8 @@ export const utilsFields: INodeProperties[] = [
 			{ name: 'P2PKH (Legacy)', value: 'p2pkh' },
 			{ name: 'P2SH', value: 'p2sh' },
 			{ name: 'P2WPKH (SegWit)', value: 'p2wpkh' },
+			{ name: 'P2PKH CashAddr (Bitcoin Cash)', value: 'p2pkh-cash' },
+			{ name: 'P2SH CashAddr (Bitcoin Cash)', value: 'p2sh-cash' },
 		],
 		displayOptions: {
 			show: { resource: ['utils'], blockchainType: ['utxo'], operation: ['deriveAddresses'] },

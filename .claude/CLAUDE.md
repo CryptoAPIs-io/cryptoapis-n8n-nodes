@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 An [n8n](https://n8n.io/) community node package (`@cryptoapis-io/n8n-nodes-cryptoapis`) that integrates [Crypto APIs](https://cryptoapis.io/) blockchain services into n8n workflows. It provides two node types:
 
-1. **CryptoApis** — A regular workflow node with 13 resources covering blockchain data, transactions, market data, HD wallets, contracts, events, fees, broadcast, simulation, address history, and utilities. Has `usableAsTool: true` so AI Agent nodes can use it directly.
+1. **CryptoApis** — A regular workflow node with 14 resources covering blockchain data, transactions, market data, HD wallets, contracts, events, fees, broadcast, simulation, address history, AML, and utilities. Has `usableAsTool: true` so AI Agent nodes can use it directly.
 2. **CryptoApisTool** — An AI Agent tool sub-node that connects to a CryptoAPIs MCP server, discovers all available tools, and exposes them as LangChain `DynamicStructuredTool` instances.
 
 ## Build & Development Commands
@@ -122,20 +122,21 @@ API version `2024-12-12` is sent as `x-api-version` header on all requests.
 - **Pagination** — Two styles: cursor-based (most endpoints) and offset-based (some UTXO endpoints). Both support `returnAll` toggle in the UI.
 - **n8n community node naming** — n8n supports scoped packages: `@<scope>/n8n-nodes-<name>`. The `n8n.nodes` and `n8n.credentials` arrays in package.json list the compiled `.js` paths.
 
-## Resources (13 total)
+## Resources (14 total)
 
 | Resource | Key Operations |
 |----------|---------------|
+| `aml` | verify-address, screen-transaction (screen-transaction: 19 chains incl. EVM/UTXO/XRP/Solana/Tezos/Kaspa/Tron; verify-address has no blockchain param) |
 | `marketData` | get-asset-details-by-id, get-asset-details-by-symbol, list-assets, get-exchange-rate, list-exchange-rates |
 | `addressLatest` | get-balance, list-transactions, list-token-transfers, list-internal-transactions, get-next-nonce (EVM/UTXO/Solana/XRP/Kaspa) |
 | `blockData` | get-block-by-height, get-block-by-hash, list-transactions-by-block, get-last-mined-block (EVM/UTXO/XRP) |
-| `blockchainFees` | get-fee-recommendations, get-eip-1559-fees, estimate-gas (EVM/UTXO/XRP) |
+| `blockchainFees` | get-fee-recommendations, get-eip-1559-fees, estimate-gas (EVM/UTXO/XRP); Tezos estimate-transfer / estimate-fa12-transfer / estimate-fa2-transfer |
 | `transactionsData` | get-transaction-details, list-internal-transactions, list-token-transfers, list-logs (EVM/UTXO/Solana/XRP/Kaspa) |
 | `hdWallet` | sync, activate, delete, get-status, get-balance, list-transactions, list-token-transfers (EVM/UTXO/XRP) |
 | `addressHistory` | get-statistics, list-transactions, list-token-transfers, list-internal-transactions (EVM/UTXO) |
-| `prepareTransactions` | prepare-transaction, prepare-token-transfer (EVM) |
-| `simulate` | simulate-transaction (EVM) |
-| `broadcast` | broadcast-signed-transaction (EVM/UTXO) |
+| `prepareTransactions` | prepare-transaction, prepare-token-transfer (EVM incl. Tron via dedicated endpoints); Tezos native-coins / fa1-2-tokens / fa2-tokens. A `blockchainType` selector (evm\|tezos) gates the two field sets; it defaults to `evm` so pre-existing workflows are unaffected. |
+| `simulate` | simulate-transaction (Ethereum only — the endpoint has no blockchain parameter) |
+| `broadcast` | broadcast-signed-transaction (EVM/UTXO/XRP/Solana/Tezos) |
 | `blockchainEvents` | create-event, list-events, delete-event (webhooks) |
 | `contracts` | get-token-details (EVM/Solana) |
 | `utils` | validate-address, decode-raw-transaction, derive-addresses, convert-bch-address (EVM/UTXO/XRP) |

@@ -1,13 +1,26 @@
 import type { INodeProperties } from 'n8n-workflow';
+import { blockchainOptions, networkOptions } from '../../transport/blockchainConstants';
 import {
-	blockchainOptions,
-	networkOptions,
-	EVM_BLOCKCHAINS,
-	EVM_NETWORKS,
-	UTXO_BLOCKCHAINS,
-	UTXO_NETWORKS,
-	ALL_BLOCKCHAINS,
-} from '../../transport/blockchainConstants';
+	MANAGE_BLOCKCHAINS,
+	MANAGE_NETWORKS,
+	MANAGE_ACTIVATE_DELETE_NETWORKS,
+	EVM_STATISTICS_BLOCKCHAINS,
+	EVM_STATISTICS_NETWORKS,
+	EVM_TRANSACTIONS_BLOCKCHAINS,
+	EVM_TRANSACTIONS_NETWORKS,
+	EVM_TOKENS_TRANSFERS_BLOCKCHAINS,
+	EVM_TOKENS_TRANSFERS_NETWORKS,
+	EVM_INTERNAL_TRANSACTIONS_BLOCKCHAINS,
+	EVM_INTERNAL_TRANSACTIONS_NETWORKS,
+	EVM_TOKENS_BLOCKCHAINS,
+	EVM_TOKENS_NETWORKS,
+	UTXO_STATISTICS_BLOCKCHAINS,
+	UTXO_STATISTICS_NETWORKS,
+	UTXO_TRANSACTIONS_BLOCKCHAINS,
+	UTXO_TRANSACTIONS_NETWORKS,
+	UTXO_UNSPENT_OUTPUTS_BLOCKCHAINS,
+	UTXO_UNSPENT_OUTPUTS_NETWORKS,
+} from './blockchainEnums';
 
 export const addressHistoryOperations: INodeProperties[] = [
 	{
@@ -34,7 +47,7 @@ export const addressHistoryOperations: INodeProperties[] = [
 			{ name: 'List Synced Addresses', value: 'listSyncedAddresses', description: 'List all synced addresses (Management)', action: 'List all synced addresses' },
 			{ name: 'Activate Address', value: 'activateAddress', description: 'Activate a previously deactivated address sync (Management)', action: 'Activate an address sync' },
 			{ name: 'Delete Address', value: 'deleteAddress', description: 'Delete an address sync (Management)', action: 'Delete an address sync' },
-			{ name: 'Get Statistics', value: 'getStatistics', description: 'Get address statistics (EVM: ETH/ETC, UTXO: BTC/BCH)', action: 'Get address history statistics' },
+			{ name: 'Get Statistics', value: 'getStatistics', description: 'Get address statistics (EVM: Ethereum/Ethereum Classic only, UTXO: BTC/BCH only)', action: 'Get address history statistics' },
 			{ name: 'List Transactions', value: 'listTransactions', description: 'List full transaction history for an address (EVM/UTXO)', action: 'List full transaction history for an address' },
 			{ name: 'List Token Transfers', value: 'listTokenTransfers', description: 'List full token transfer history (EVM only)', action: 'List full token transfer history' },
 			{ name: 'List Internal Transactions', value: 'listInternalTransactions', description: 'List full internal transaction history (EVM only)', action: 'List full internal transaction history' },
@@ -45,15 +58,20 @@ export const addressHistoryOperations: INodeProperties[] = [
 	},
 ];
 
+/**
+ * Blockchain/network dropdowns are scoped per operation (not just per blockchainType) because the
+ * spec's support varies by operation on the same resource — e.g. EVM getStatistics supports only
+ * 2 chains while listTransactions supports 5. See ./blockchainEnums.ts for the source enums.
+ */
 export const addressHistoryFields: INodeProperties[] = [
-	// Blockchain (Management)
+	// Blockchain/Network (Management)
 	{
 		displayName: 'Blockchain',
 		name: 'blockchain',
 		type: 'options',
 		required: true,
 		default: 'bitcoin',
-		options: blockchainOptions(ALL_BLOCKCHAINS),
+		options: blockchainOptions(MANAGE_BLOCKCHAINS),
 		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['management'] } },
 	},
 	{
@@ -62,27 +80,40 @@ export const addressHistoryFields: INodeProperties[] = [
 		type: 'options',
 		required: true,
 		default: 'mainnet',
-		description: 'Available networks depend on the selected blockchain. Invalid pairs will be rejected by the API.',
-		options: [
-			{ name: 'Mainnet', value: 'mainnet' },
-			{ name: 'Testnet', value: 'testnet' },
-			{ name: 'Sepolia', value: 'sepolia' },
-			{ name: 'Mordor', value: 'mordor' },
-			{ name: 'Amoy', value: 'amoy' },
-			{ name: 'Nile', value: 'nile' },
-			{ name: 'Fuji', value: 'fuji' },
-		],
-		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['management'] } },
+		options: networkOptions(MANAGE_NETWORKS),
+		displayOptions: {
+			show: {
+				resource: ['addressHistory'],
+				blockchainType: ['management'],
+				operation: ['syncAddress', 'listSyncedAddresses'],
+			},
+		},
 	},
-	// Blockchain (EVM)
+	{
+		displayName: 'Network',
+		name: 'network',
+		type: 'options',
+		required: true,
+		default: 'mainnet',
+		description: 'Also accepts the deprecated Polygon testnet "mumbai" for activate/delete, per the spec',
+		options: networkOptions(MANAGE_ACTIVATE_DELETE_NETWORKS),
+		displayOptions: {
+			show: {
+				resource: ['addressHistory'],
+				blockchainType: ['management'],
+				operation: ['activateAddress', 'deleteAddress'],
+			},
+		},
+	},
+	// Blockchain/Network (EVM) — one pair per operation, enums differ per spec operation
 	{
 		displayName: 'Blockchain',
 		name: 'blockchain',
 		type: 'options',
 		required: true,
 		default: 'ethereum',
-		options: blockchainOptions(EVM_BLOCKCHAINS),
-		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['evm'] } },
+		options: blockchainOptions(EVM_STATISTICS_BLOCKCHAINS),
+		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['evm'], operation: ['getStatistics'] } },
 	},
 	{
 		displayName: 'Network',
@@ -90,18 +121,90 @@ export const addressHistoryFields: INodeProperties[] = [
 		type: 'options',
 		required: true,
 		default: 'mainnet',
-		options: networkOptions(EVM_NETWORKS),
-		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['evm'] } },
+		options: networkOptions(EVM_STATISTICS_NETWORKS),
+		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['evm'], operation: ['getStatistics'] } },
 	},
-	// Blockchain (UTXO)
+	{
+		displayName: 'Blockchain',
+		name: 'blockchain',
+		type: 'options',
+		required: true,
+		default: 'ethereum',
+		options: blockchainOptions(EVM_TRANSACTIONS_BLOCKCHAINS),
+		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['evm'], operation: ['listTransactions'] } },
+	},
+	{
+		displayName: 'Network',
+		name: 'network',
+		type: 'options',
+		required: true,
+		default: 'mainnet',
+		options: networkOptions(EVM_TRANSACTIONS_NETWORKS),
+		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['evm'], operation: ['listTransactions'] } },
+	},
+	{
+		displayName: 'Blockchain',
+		name: 'blockchain',
+		type: 'options',
+		required: true,
+		default: 'ethereum',
+		options: blockchainOptions(EVM_TOKENS_TRANSFERS_BLOCKCHAINS),
+		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['evm'], operation: ['listTokenTransfers'] } },
+	},
+	{
+		displayName: 'Network',
+		name: 'network',
+		type: 'options',
+		required: true,
+		default: 'mainnet',
+		options: networkOptions(EVM_TOKENS_TRANSFERS_NETWORKS),
+		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['evm'], operation: ['listTokenTransfers'] } },
+	},
+	{
+		displayName: 'Blockchain',
+		name: 'blockchain',
+		type: 'options',
+		required: true,
+		default: 'ethereum',
+		options: blockchainOptions(EVM_INTERNAL_TRANSACTIONS_BLOCKCHAINS),
+		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['evm'], operation: ['listInternalTransactions'] } },
+	},
+	{
+		displayName: 'Network',
+		name: 'network',
+		type: 'options',
+		required: true,
+		default: 'mainnet',
+		options: networkOptions(EVM_INTERNAL_TRANSACTIONS_NETWORKS),
+		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['evm'], operation: ['listInternalTransactions'] } },
+	},
+	{
+		displayName: 'Blockchain',
+		name: 'blockchain',
+		type: 'options',
+		required: true,
+		default: 'ethereum',
+		options: blockchainOptions(EVM_TOKENS_BLOCKCHAINS),
+		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['evm'], operation: ['listTokens'] } },
+	},
+	{
+		displayName: 'Network',
+		name: 'network',
+		type: 'options',
+		required: true,
+		default: 'mainnet',
+		options: networkOptions(EVM_TOKENS_NETWORKS),
+		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['evm'], operation: ['listTokens'] } },
+	},
+	// Blockchain/Network (UTXO) — one pair per operation, enums differ per spec operation
 	{
 		displayName: 'Blockchain',
 		name: 'blockchain',
 		type: 'options',
 		required: true,
 		default: 'bitcoin',
-		options: blockchainOptions(UTXO_BLOCKCHAINS),
-		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['utxo'] } },
+		options: blockchainOptions(UTXO_STATISTICS_BLOCKCHAINS),
+		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['utxo'], operation: ['getStatistics'] } },
 	},
 	{
 		displayName: 'Network',
@@ -109,8 +212,44 @@ export const addressHistoryFields: INodeProperties[] = [
 		type: 'options',
 		required: true,
 		default: 'mainnet',
-		options: networkOptions(UTXO_NETWORKS),
-		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['utxo'] } },
+		options: networkOptions(UTXO_STATISTICS_NETWORKS),
+		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['utxo'], operation: ['getStatistics'] } },
+	},
+	{
+		displayName: 'Blockchain',
+		name: 'blockchain',
+		type: 'options',
+		required: true,
+		default: 'bitcoin',
+		options: blockchainOptions(UTXO_TRANSACTIONS_BLOCKCHAINS),
+		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['utxo'], operation: ['listTransactions'] } },
+	},
+	{
+		displayName: 'Network',
+		name: 'network',
+		type: 'options',
+		required: true,
+		default: 'mainnet',
+		options: networkOptions(UTXO_TRANSACTIONS_NETWORKS),
+		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['utxo'], operation: ['listTransactions'] } },
+	},
+	{
+		displayName: 'Blockchain',
+		name: 'blockchain',
+		type: 'options',
+		required: true,
+		default: 'bitcoin',
+		options: blockchainOptions(UTXO_UNSPENT_OUTPUTS_BLOCKCHAINS),
+		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['utxo'], operation: ['listUnspentOutputs'] } },
+	},
+	{
+		displayName: 'Network',
+		name: 'network',
+		type: 'options',
+		required: true,
+		default: 'mainnet',
+		options: networkOptions(UTXO_UNSPENT_OUTPUTS_NETWORKS),
+		displayOptions: { show: { resource: ['addressHistory'], blockchainType: ['utxo'], operation: ['listUnspentOutputs'] } },
 	},
 	// Address (not needed for listSyncedAddresses)
 	{

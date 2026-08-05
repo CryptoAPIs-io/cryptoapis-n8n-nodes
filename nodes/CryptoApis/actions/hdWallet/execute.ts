@@ -3,7 +3,8 @@ import { cryptoApisRequest, unwrapSingleItem } from '../../transport/requestHelp
 import { handleOffsetPagination, handleCursorPagination } from '../../transport/paginationHelpers';
 
 function buildManagePath(blockchain: string, network: string): string {
-	return `/hd-wallets/${blockchain}/${network}`;
+	// Spec requires the literal "manage" segment: /hd-wallets/manage/{blockchain}/{network}/...
+	return `/hd-wallets/manage/${blockchain}/${network}`;
 }
 
 function buildDataPath(blockchainType: string, blockchain: string, network: string): string {
@@ -28,20 +29,23 @@ export async function executeHdWallet(
 		const basePath = buildManagePath(blockchain, network);
 
 		if (operation === 'syncWallet') {
+			// extendedPublicKey is a path segment, not a body field; spec takes an empty body.
 			const response = await cryptoApisRequest.call(this, {
+				resource: 'hdWallet',
 				method: 'POST',
-				endpoint: `${basePath}/xpubs/sync`,
-				body: { extendedPublicKey } as IDataObject,
+				endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}/sync`,
+				body: {},
 			});
 			return [{ json: unwrapSingleItem(response) }];
 		}
 
 		if (operation === 'listWallets') {
+			// No /xpubs suffix — GET /hd-wallets/manage/{blockchain}/{network} directly.
 			const returnAll = this.getNodeParameter('returnAll', index) as boolean;
 			const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 			const items = await handleOffsetPagination.call(
 				this,
-				{ method: 'GET', endpoint: `${basePath}/xpubs` },
+				{ resource: 'hdWallet', method: 'GET', endpoint: basePath },
 				returnAll,
 				limit,
 			);
@@ -49,15 +53,20 @@ export async function executeHdWallet(
 		}
 
 		if (operation === 'activateWallet') {
+			// Spec method is POST, not PUT. Spec requires the { data: { item: {} } } wrapper even
+			// though there are no actual fields — pass an empty body object to trigger it.
 			const response = await cryptoApisRequest.call(this, {
-				method: 'PUT',
+				resource: 'hdWallet',
+				method: 'POST',
 				endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}/activate`,
+				body: {},
 			});
 			return [{ json: unwrapSingleItem(response) }];
 		}
 
 		if (operation === 'deleteWallet') {
 			const response = await cryptoApisRequest.call(this, {
+				resource: 'hdWallet',
 				method: 'DELETE',
 				endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}`,
 			});
@@ -66,6 +75,7 @@ export async function executeHdWallet(
 
 		if (operation === 'getSyncStatus') {
 			const response = await cryptoApisRequest.call(this, {
+				resource: 'hdWallet',
 				method: 'GET',
 				endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}/status`,
 			});
@@ -79,23 +89,24 @@ export async function executeHdWallet(
 	const basePath = buildDataPath(blockchainType, blockchain, network);
 
 	if (operation === 'getDetails') {
+		// Spec requires the /details suffix.
 		const response = await cryptoApisRequest.call(this, {
+			resource: 'hdWallet',
 			method: 'GET',
-			endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}`,
+			endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}/details`,
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
 
 	if (operation === 'deriveReceivingAddress') {
-		const body: IDataObject = { extendedPublicKey };
-		if (blockchainType === 'utxo') {
-			const addressFormat = this.getNodeParameter('addressFormat', index, 'p2wpkh') as string;
-			body.addressFormat = addressFormat;
-		}
+		// Spec path is {extendedPublicKey}/addresses/derive-and-sync (extendedPublicKey is a path
+		// segment, not the flat /xpubs/derive-addresses shape used before). The endpoint takes no
+		// body at all -- addressFormat is not a parameter of this operation.
 		const response = await cryptoApisRequest.call(this, {
+			resource: 'hdWallet',
 			method: 'POST',
-			endpoint: `${basePath}/xpubs/derive-addresses`,
-			body,
+			endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}/addresses/derive-and-sync`,
+			body: {},
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
@@ -105,7 +116,7 @@ export async function executeHdWallet(
 		const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 		const items = await handleOffsetPagination.call(
 			this,
-			{ method: 'GET', endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}/addresses` },
+			{ resource: 'hdWallet', method: 'GET', endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}/addresses` },
 			returnAll,
 			limit,
 		);
@@ -117,7 +128,7 @@ export async function executeHdWallet(
 		const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 		const items = await handleCursorPagination.call(
 			this,
-			{ method: 'GET', endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}/transactions` },
+			{ resource: 'hdWallet', method: 'GET', endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}/transactions` },
 			returnAll,
 			limit,
 		);
@@ -129,7 +140,7 @@ export async function executeHdWallet(
 		const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 		const items = await handleOffsetPagination.call(
 			this,
-			{ method: 'GET', endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}/assets` },
+			{ resource: 'hdWallet', method: 'GET', endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}/assets` },
 			returnAll,
 			limit,
 		);
@@ -151,6 +162,7 @@ export async function executeHdWallet(
 			};
 			if (data) body.data = data;
 			const response = await cryptoApisRequest.call(this, {
+				resource: 'hdWallet',
 				method: 'POST',
 				endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}/transactions/prepare`,
 				body,
@@ -167,6 +179,7 @@ export async function executeHdWallet(
 				fee: { priority: feePriority },
 			};
 			const response = await cryptoApisRequest.call(this, {
+				resource: 'hdWallet',
 				method: 'POST',
 				endpoint: `${basePath}/${encodeURIComponent(extendedPublicKey)}/transactions/prepare`,
 				body,

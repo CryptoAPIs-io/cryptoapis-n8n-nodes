@@ -49,6 +49,9 @@ export const EVM_NETWORKS = ['mainnet', 'sepolia', 'mordor', 'testnet', 'nile', 
 export const UTXO_NETWORKS = ['mainnet', 'testnet'] as const;
 export const XRP_NETWORKS = ['mainnet', 'testnet'] as const;
 export const SOLANA_NETWORKS = ['mainnet', 'devnet'] as const;
+// Tezos' testnet is 'shadownet' — NOT 'ghostnet', which the public Tezos ecosystem
+// uses but this API does not accept.
+export const TEZOS_NETWORKS = ['mainnet', 'shadownet'] as const;
 
 export const EVM_NETWORK_CHAIN_IDS: Record<string, Record<string, number>> = {
 	ethereum: { mainnet: 1, sepolia: 11155111 },

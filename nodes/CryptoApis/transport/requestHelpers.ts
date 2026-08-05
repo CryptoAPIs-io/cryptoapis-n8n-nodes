@@ -14,6 +14,7 @@ export interface CryptoApisRequestOptions {
 	endpoint: string;
 	body?: IDataObject;
 	qs?: IDataObject;
+	resource?: string;
 }
 
 /**
@@ -28,9 +29,17 @@ export async function cryptoApisRequest(
 	const credentials = await this.getCredentials('cryptoApisApi');
 	const baseUrl = (credentials.apiUrl as string) || DEFAULT_BASE_URL;
 
+	// Convert camelCase resource to kebab-case for x-source header
+	const source = options.resource
+		? `n8n-${options.resource.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()}`
+		: 'n8n-unknown';
+
 	const requestOptions: IHttpRequestOptions = {
 		method: options.method,
 		url: `${baseUrl}${options.endpoint}`,
+		headers: {
+			'x-source': source,
+		},
 		json: true,
 	};
 
@@ -38,8 +47,12 @@ export async function cryptoApisRequest(
 		requestOptions.qs = options.qs;
 	}
 
-	if (options.body && Object.keys(options.body).length > 0
-		&& (options.method === 'POST' || options.method === 'PUT')) {
+	// Wrap whenever the caller passed a body object at all — including an empty one ({}). Some
+	// endpoints (e.g. activate) require the { data: { item: {} } } wrapper with no fields inside it;
+	// gating on Object.keys(...).length > 0 previously meant those calls sent no body at all and
+	// failed with unsupported_media_type instead of reaching the API. Omit `body` entirely (undefined)
+	// for calls that genuinely send none.
+	if (options.body !== undefined && (options.method === 'POST' || options.method === 'PUT')) {
 		requestOptions.body = {
 			data: {
 				item: options.body,

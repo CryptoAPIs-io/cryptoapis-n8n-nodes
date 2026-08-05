@@ -2,13 +2,16 @@ import type { INodeProperties } from 'n8n-workflow';
 import {
 	blockchainOptions,
 	networkOptions,
-	EVM_BLOCKCHAINS,
-	EVM_NETWORKS,
 	UTXO_BLOCKCHAINS,
 	UTXO_NETWORKS,
 	XRP_NETWORKS,
-	ALL_BLOCKCHAINS,
 } from '../../transport/blockchainConstants';
+import {
+	MANAGE_BLOCKCHAINS,
+	MANAGE_NETWORKS,
+	EVM_HD_WALLET_BLOCKCHAINS,
+	EVM_HD_WALLET_NETWORKS,
+} from './blockchainEnums';
 
 export const hdWalletOperations: INodeProperties[] = [
 	{
@@ -49,14 +52,15 @@ export const hdWalletOperations: INodeProperties[] = [
 ];
 
 export const hdWalletFields: INodeProperties[] = [
-	// Blockchain (Management)
+	// Blockchain (Management) — narrower than the generic ALL_BLOCKCHAINS union: includes xrp,
+	// excludes L2s that have no HD-wallet endpoint at all (polygon/avalanche/arbitrum/base/optimism).
 	{
 		displayName: 'Blockchain',
 		name: 'blockchain',
 		type: 'options',
 		required: true,
 		default: 'bitcoin',
-		options: blockchainOptions(ALL_BLOCKCHAINS),
+		options: blockchainOptions(MANAGE_BLOCKCHAINS),
 		displayOptions: { show: { resource: ['hdWallet'], blockchainType: ['management'] } },
 	},
 	{
@@ -66,25 +70,18 @@ export const hdWalletFields: INodeProperties[] = [
 		required: true,
 		default: 'mainnet',
 		description: 'Available networks depend on the selected blockchain. Invalid pairs will be rejected by the API.',
-		options: [
-			{ name: 'Mainnet', value: 'mainnet' },
-			{ name: 'Testnet', value: 'testnet' },
-			{ name: 'Sepolia', value: 'sepolia' },
-			{ name: 'Mordor', value: 'mordor' },
-			{ name: 'Amoy', value: 'amoy' },
-			{ name: 'Nile', value: 'nile' },
-			{ name: 'Fuji', value: 'fuji' },
-		],
+		options: networkOptions(MANAGE_NETWORKS),
 		displayOptions: { show: { resource: ['hdWallet'], blockchainType: ['management'] } },
 	},
-	// Blockchain (EVM)
+	// Blockchain (EVM) — narrower than the generic EVM_BLOCKCHAINS union: only 4 of the 9 EVM
+	// chains have HD-wallet endpoints (no polygon/avalanche/arbitrum/base/optimism).
 	{
 		displayName: 'Blockchain',
 		name: 'blockchain',
 		type: 'options',
 		required: true,
 		default: 'ethereum',
-		options: blockchainOptions(EVM_BLOCKCHAINS),
+		options: blockchainOptions(EVM_HD_WALLET_BLOCKCHAINS),
 		displayOptions: { show: { resource: ['hdWallet'], blockchainType: ['evm'] } },
 	},
 	{
@@ -93,7 +90,7 @@ export const hdWalletFields: INodeProperties[] = [
 		type: 'options',
 		required: true,
 		default: 'mainnet',
-		options: networkOptions(EVM_NETWORKS),
+		options: networkOptions(EVM_HD_WALLET_NETWORKS),
 		displayOptions: { show: { resource: ['hdWallet'], blockchainType: ['evm'] } },
 	},
 	// Blockchain (UTXO)
@@ -195,21 +192,6 @@ export const hdWalletFields: INodeProperties[] = [
 		],
 		displayOptions: {
 			show: { resource: ['hdWallet'], operation: ['prepareTransaction'] },
-		},
-	},
-	// Address Format (UTXO)
-	{
-		displayName: 'Address Format',
-		name: 'addressFormat',
-		type: 'options',
-		default: 'p2wpkh',
-		options: [
-			{ name: 'P2PKH (Legacy)', value: 'p2pkh' },
-			{ name: 'P2SH', value: 'p2sh' },
-			{ name: 'P2WPKH (SegWit)', value: 'p2wpkh' },
-		],
-		displayOptions: {
-			show: { resource: ['hdWallet'], blockchainType: ['utxo'], operation: ['deriveReceivingAddress'] },
 		},
 	},
 	// Pagination

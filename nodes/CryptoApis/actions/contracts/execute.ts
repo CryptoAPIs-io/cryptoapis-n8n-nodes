@@ -13,7 +13,8 @@ export async function executeContracts(
 		const blockchain = this.getNodeParameter('blockchain', index) as string;
 		const response = await cryptoApisRequest.call(this, {
 			method: 'GET',
-			endpoint: `/smart-contracts/evm/${blockchain}/${network}/${encodeURIComponent(contractAddress)}/token-data`,
+			endpoint: `/contracts/evm/${blockchain}/${network}/${encodeURIComponent(contractAddress)}/token-details`,
+			resource: 'contracts',
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
@@ -21,7 +22,8 @@ export async function executeContracts(
 	if (blockchainType === 'solana') {
 		const response = await cryptoApisRequest.call(this, {
 			method: 'GET',
-			endpoint: `/smart-contracts/solana/${network}/${encodeURIComponent(contractAddress)}/token-data`,
+			endpoint: `/contracts/solana/${network}/${encodeURIComponent(contractAddress)}/token-details`,
+			resource: 'contracts',
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}

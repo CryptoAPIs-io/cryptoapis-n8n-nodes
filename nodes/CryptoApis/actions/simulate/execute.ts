@@ -24,6 +24,7 @@ export async function executeSimulate(
 		method: 'POST',
 		endpoint: `/simulate-transactions/evm/ethereum/${network}`,
 		body,
+		resource: 'simulate',
 	});
 	return [{ json: unwrapSingleItem(response) }];
 }

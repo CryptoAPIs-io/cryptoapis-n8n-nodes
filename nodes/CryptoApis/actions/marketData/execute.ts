@@ -13,16 +13,20 @@ export async function executeMarketData(
 		const response = await cryptoApisRequest.call(this, {
 			method: 'GET',
 			endpoint: `/market-data/assets/by-id/${encodeURIComponent(assetId)}`,
+			resource: 'marketData',
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
 
 	if (operation === 'getAssetDetailsBySymbol') {
-		const fromSymbol = this.getNodeParameter('fromSymbol', index) as string;
-		const toSymbol = this.getNodeParameter('toSymbol', index) as string;
+		// Spec path is a single combined symbol segment (e.g. "BTC"), not two separate
+		// from/to segments -- this was copy-pasted from the exchange-rate-by-symbols shape,
+		// which genuinely does take a pair, but asset lookup by symbol does not.
+		const assetSymbol = this.getNodeParameter('assetSymbol', index) as string;
 		const response = await cryptoApisRequest.call(this, {
 			method: 'GET',
-			endpoint: `/market-data/assets/by-symbol/${encodeURIComponent(fromSymbol)}/${encodeURIComponent(toSymbol)}`,
+			endpoint: `/market-data/assets/by-symbol/${encodeURIComponent(assetSymbol)}`,
+			resource: 'marketData',
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
@@ -33,6 +37,7 @@ export async function executeMarketData(
 		const response = await cryptoApisRequest.call(this, {
 			method: 'GET',
 			endpoint: `/market-data/exchange-rates/by-symbol/${encodeURIComponent(fromSymbol)}/${encodeURIComponent(toSymbol)}`,
+			resource: 'marketData',
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
@@ -43,6 +48,7 @@ export async function executeMarketData(
 		const response = await cryptoApisRequest.call(this, {
 			method: 'GET',
 			endpoint: `/market-data/exchange-rates/by-id/${encodeURIComponent(fromAssetId)}/${encodeURIComponent(toAssetId)}`,
+			resource: 'marketData',
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
@@ -57,7 +63,7 @@ export async function executeMarketData(
 
 		const items = await handleOffsetPagination.call(
 			this,
-			{ method: 'GET', endpoint: '/market-data/metadata/assets', qs },
+			{ method: 'GET', endpoint: '/market-data/metadata/assets', qs, resource: 'marketData' },
 			returnAll,
 			limit,
 		);

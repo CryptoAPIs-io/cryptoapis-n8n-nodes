@@ -28,6 +28,7 @@ export async function executeBlockData(
 	if (operation === 'getBlockByHeight') {
 		const blockHeight = this.getNodeParameter('blockHeight', index) as string;
 		const response = await cryptoApisRequest.call(this, {
+			resource: 'blockData',
 			method: 'GET',
 			endpoint: `${basePath}/height/${encodeURIComponent(blockHeight)}/details`,
 		});
@@ -37,6 +38,7 @@ export async function executeBlockData(
 	if (operation === 'getBlockByHash') {
 		const blockHash = this.getNodeParameter('blockHash', index) as string;
 		const response = await cryptoApisRequest.call(this, {
+			resource: 'blockData',
 			method: 'GET',
 			endpoint: `${basePath}/hash/${encodeURIComponent(blockHash)}/details`,
 		});
@@ -49,7 +51,7 @@ export async function executeBlockData(
 		const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 		const items = await handleOffsetPagination.call(
 			this,
-			{ method: 'GET', endpoint: `${basePath}/hash/${encodeURIComponent(blockHash)}/transactions` },
+			{ resource: 'blockData', method: 'GET', endpoint: `${basePath}/hash/${encodeURIComponent(blockHash)}/transactions` },
 			returnAll,
 			limit,
 		);
@@ -62,7 +64,7 @@ export async function executeBlockData(
 		const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 		const items = await handleOffsetPagination.call(
 			this,
-			{ method: 'GET', endpoint: `${basePath}/height/${encodeURIComponent(blockHeight)}/transactions` },
+			{ resource: 'blockData', method: 'GET', endpoint: `${basePath}/height/${encodeURIComponent(blockHeight)}/transactions` },
 			returnAll,
 			limit,
 		);
@@ -70,9 +72,11 @@ export async function executeBlockData(
 	}
 
 	if (operation === 'getLastMinedBlock') {
+		// Spec segment is latest/details, not last.
 		const response = await cryptoApisRequest.call(this, {
+			resource: 'blockData',
 			method: 'GET',
-			endpoint: `${basePath}/last`,
+			endpoint: `${basePath}/latest/details`,
 		});
 		return [{ json: unwrapSingleItem(response) }];
 	}
@@ -80,6 +84,7 @@ export async function executeBlockData(
 	if (operation === 'listLatestMinedBlocks') {
 		const count = this.getNodeParameter('count', index) as number;
 		const response = await cryptoApisRequest.call(this, {
+			resource: 'blockData',
 			method: 'GET',
 			endpoint: `${basePath}/latest`,
 			qs: { count } as IDataObject,

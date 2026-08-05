@@ -15,11 +15,14 @@ export async function executeAddressHistory(
 		: (this.getNodeParameter('address', index) as string);
 
 	// --- Management operations ---
+	// Real resource is /addresses-historical/manage/{blockchain}/{network}/... — the previous
+	// implementation called a nonexistent /address-syncs/... resource (dead on every call).
 	if (blockchainType === 'management') {
 		if (operation === 'syncAddress') {
 			const response = await cryptoApisRequest.call(this, {
+				resource: 'addressHistory',
 				method: 'POST',
-				endpoint: `/address-syncs/${blockchain}/${network}`,
+				endpoint: `/addresses-historical/manage/${blockchain}/${network}`,
 				body: { address } as IDataObject,
 			});
 			return [{ json: unwrapSingleItem(response) }];
@@ -30,7 +33,7 @@ export async function executeAddressHistory(
 			const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 			const items = await handleCursorPagination.call(
 				this,
-				{ method: 'GET', endpoint: `/address-syncs/${blockchain}/${network}` },
+				{ resource: 'addressHistory', method: 'GET', endpoint: `/addresses-historical/manage/${blockchain}/${network}` },
 				returnAll,
 				limit,
 			);
@@ -38,30 +41,38 @@ export async function executeAddressHistory(
 		}
 
 		if (operation === 'activateAddress') {
+			// Spec method is POST, not PUT. Spec requires the { data: { item: {} } } wrapper even
+			// though there are no actual fields — pass an empty body object to trigger it.
 			const response = await cryptoApisRequest.call(this, {
-				method: 'PUT',
-				endpoint: `/address-syncs/${blockchain}/${network}/${encodeURIComponent(address)}/activate`,
+				resource: 'addressHistory',
+				method: 'POST',
+				endpoint: `/addresses-historical/manage/${blockchain}/${network}/${encodeURIComponent(address)}/activate`,
+				body: {},
 			});
 			return [{ json: unwrapSingleItem(response) }];
 		}
 
 		if (operation === 'deleteAddress') {
 			const response = await cryptoApisRequest.call(this, {
+				resource: 'addressHistory',
 				method: 'DELETE',
-				endpoint: `/address-syncs/${blockchain}/${network}/${encodeURIComponent(address)}`,
+				endpoint: `/addresses-historical/manage/${blockchain}/${network}/${encodeURIComponent(address)}`,
 			});
 			return [{ json: unwrapSingleItem(response) }];
 		}
 	}
 
 	// --- EVM History ---
+	// Real resource is /addresses-historical/evm/... (was /addresses-history/evm/...) with
+	// "statistics" (was "stats"), "tokens-transfers" (was "token-transfers") segment names.
 	if (blockchainType === 'evm') {
-		const basePath = `/addresses-history/evm/${blockchain}/${network}/${encodeURIComponent(address)}`;
+		const basePath = `/addresses-historical/evm/${blockchain}/${network}/${encodeURIComponent(address)}`;
 
 		if (operation === 'getStatistics') {
 			const response = await cryptoApisRequest.call(this, {
+				resource: 'addressHistory',
 				method: 'GET',
-				endpoint: `${basePath}/stats`,
+				endpoint: `${basePath}/statistics`,
 			});
 			return [{ json: unwrapSingleItem(response) }];
 		}
@@ -71,7 +82,7 @@ export async function executeAddressHistory(
 			const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 			const items = await handleCursorPagination.call(
 				this,
-				{ method: 'GET', endpoint: `${basePath}/transactions` },
+				{ resource: 'addressHistory', method: 'GET', endpoint: `${basePath}/transactions` },
 				returnAll,
 				limit,
 			);
@@ -83,7 +94,7 @@ export async function executeAddressHistory(
 			const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 			const items = await handleCursorPagination.call(
 				this,
-				{ method: 'GET', endpoint: `${basePath}/token-transfers` },
+				{ resource: 'addressHistory', method: 'GET', endpoint: `${basePath}/tokens-transfers` },
 				returnAll,
 				limit,
 			);
@@ -95,7 +106,7 @@ export async function executeAddressHistory(
 			const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 			const items = await handleCursorPagination.call(
 				this,
-				{ method: 'GET', endpoint: `${basePath}/internal-transactions` },
+				{ resource: 'addressHistory', method: 'GET', endpoint: `${basePath}/internal-transactions` },
 				returnAll,
 				limit,
 			);
@@ -107,7 +118,7 @@ export async function executeAddressHistory(
 			const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 			const items = await handleCursorPagination.call(
 				this,
-				{ method: 'GET', endpoint: `${basePath}/tokens` },
+				{ resource: 'addressHistory', method: 'GET', endpoint: `${basePath}/tokens` },
 				returnAll,
 				limit,
 			);
@@ -116,13 +127,16 @@ export async function executeAddressHistory(
 	}
 
 	// --- UTXO History ---
+	// Real resource is /addresses-historical/utxo/... (was /addresses-history/utxo/...) with
+	// "statistics" (was "stats") segment name.
 	if (blockchainType === 'utxo') {
-		const basePath = `/addresses-history/utxo/${blockchain}/${network}/${encodeURIComponent(address)}`;
+		const basePath = `/addresses-historical/utxo/${blockchain}/${network}/${encodeURIComponent(address)}`;
 
 		if (operation === 'getStatistics') {
 			const response = await cryptoApisRequest.call(this, {
+				resource: 'addressHistory',
 				method: 'GET',
-				endpoint: `${basePath}/stats`,
+				endpoint: `${basePath}/statistics`,
 			});
 			return [{ json: unwrapSingleItem(response) }];
 		}
@@ -132,7 +146,7 @@ export async function executeAddressHistory(
 			const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 			const items = await handleCursorPagination.call(
 				this,
-				{ method: 'GET', endpoint: `${basePath}/transactions` },
+				{ resource: 'addressHistory', method: 'GET', endpoint: `${basePath}/transactions` },
 				returnAll,
 				limit,
 			);
@@ -144,7 +158,7 @@ export async function executeAddressHistory(
 			const limit = returnAll ? 0 : (this.getNodeParameter('limit', index) as number);
 			const items = await handleCursorPagination.call(
 				this,
-				{ method: 'GET', endpoint: `${basePath}/unspent-outputs` },
+				{ resource: 'addressHistory', method: 'GET', endpoint: `${basePath}/unspent-outputs` },
 				returnAll,
 				limit,
 			);

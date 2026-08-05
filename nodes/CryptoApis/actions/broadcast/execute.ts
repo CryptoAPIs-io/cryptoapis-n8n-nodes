@@ -5,7 +5,12 @@ export async function executeBroadcast(
 	this: IExecuteFunctions,
 	index: number,
 ): Promise<INodeExecutionData[]> {
-	const blockchain = this.getNodeParameter('blockchain', index) as string;
+	const blockchainType = this.getNodeParameter('blockchainType', index) as string;
+	// xrp/solana/tezos have no separate Blockchain dropdown (blockchainType IS the chain name),
+	// matching the pattern used elsewhere in this repo for single-chain blockchain types.
+	const blockchain = ['xrp', 'solana', 'tezos'].includes(blockchainType)
+		? blockchainType
+		: (this.getNodeParameter('blockchain', index) as string);
 	const network = this.getNodeParameter('network', index) as string;
 	const signedTransactionHex = this.getNodeParameter('signedTransactionHex', index) as string;
 
@@ -13,6 +18,7 @@ export async function executeBroadcast(
 		method: 'POST',
 		endpoint: `/broadcast-transactions/${blockchain}/${network}`,
 		body: { signedTransactionHex } as IDataObject,
+		resource: 'broadcast',
 	});
 	return [{ json: unwrapSingleItem(response) }];
 }

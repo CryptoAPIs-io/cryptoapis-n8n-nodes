@@ -1,4 +1,5 @@
 import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
+import { executeAml } from './aml/execute';
 import { executeMarketData } from './marketData/execute';
 import { executeAddressLatest } from './addressLatest/execute';
 import { executeBlockData } from './blockData/execute';
@@ -20,6 +21,8 @@ export async function router(
 	const resource = this.getNodeParameter('resource', index) as string;
 
 	switch (resource) {
+		case 'aml':
+			return executeAml.call(this, index);
 		case 'marketData':
 			return executeMarketData.call(this, index);
 		case 'addressLatest':
