@@ -28,7 +28,7 @@ Full transaction history for synced addresses. Requires address sync first. Supp
 Get block details by height or hash, list transactions within blocks, and retrieve latest mined blocks for EVM, UTXO, and XRP.
 
 ### Blockchain Fees
-Fee recommendations and gas estimation for EVM (including EIP-1559), UTXO smart fee estimation, XRP fee recommendations, and Tezos fee estimates for native XTZ, FA1.2, and FA2 transfers.
+Fee recommendations and gas estimation for EVM (including EIP-1559), UTXO smart fee estimation, XRP fee recommendations, Tezos fee estimates for native XTZ / FA1.2 / FA2 transfers, and Solana compute-unit estimates for native, SPL token, and program-invocation transactions.
 
 ### Transactions Data
 Transaction details, internal transactions, token transfers, and event logs across EVM, UTXO, Solana, XRP, and Kaspa.
@@ -43,7 +43,7 @@ Token details by contract address for EVM (Ethereum, BSC, Ethereum Classic) and 
 HD wallet management (sync, list, activate, delete), address derivation, balance queries, and transaction preparation for EVM, UTXO, and XRP.
 
 ### Prepare Transactions
-Build unsigned EVM transactions for native coin, ERC-20 token, and ERC-721 NFT transfers, and unsigned Tezos transactions for native XTZ, FA1.2, and FA2 token transfers.
+Build unsigned transactions across six chain families: EVM (native coin, ERC-20, ERC-721), Tezos (native XTZ, FA1.2, FA2), Solana (native SOL, SPL tokens), XRP, Kaspa, and UTXO. Kaspa and UTXO support multiple outputs in one transaction.
 
 ### Simulate
 Dry-run Ethereum transactions to preview outcomes without broadcasting.
