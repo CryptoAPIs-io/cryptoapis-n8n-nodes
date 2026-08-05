@@ -6,7 +6,7 @@ export async function executeBroadcast(
 	index: number,
 ): Promise<INodeExecutionData[]> {
 	const blockchainType = this.getNodeParameter('blockchainType', index) as string;
-	// xrp/solana/tezos have no separate Blockchain dropdown (blockchainType IS the chain name),
+	// These have no separate Blockchain dropdown (blockchainType IS the chain name),
 	// matching the pattern used elsewhere in this repo for single-chain blockchain types.
 	const blockchain = ['xrp', 'solana', 'tezos'].includes(blockchainType)
 		? blockchainType

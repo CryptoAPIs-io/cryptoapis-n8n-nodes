@@ -4,10 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-An [n8n](https://n8n.io/) community node package (`@cryptoapis-io/n8n-nodes-cryptoapis`) that integrates [Crypto APIs](https://cryptoapis.io/) blockchain services into n8n workflows. It provides two node types:
+An [n8n](https://n8n.io/) community node package (`@cryptoapis-io/n8n-nodes-cryptoapis`) that integrates [Crypto APIs](https://cryptoapis.io/) blockchain services into n8n workflows. It provides ONE node type:
 
-1. **CryptoApis** — A regular workflow node with 14 resources covering blockchain data, transactions, market data, HD wallets, contracts, events, fees, broadcast, simulation, address history, AML, and utilities. Has `usableAsTool: true` so AI Agent nodes can use it directly.
-2. **CryptoApisTool** — An AI Agent tool sub-node that connects to a CryptoAPIs MCP server, discovers all available tools, and exposes them as LangChain `DynamicStructuredTool` instances.
+**CryptoApis** — A regular workflow node with 14 resources covering blockchain data, transactions, market data, HD wallets, contracts, events, fees, broadcast, simulation, address history, AML, and utilities. It sets `usableAsTool: true`, so AI Agent nodes can invoke it directly; a separate MCP sub-node was removed in favour of that plus n8n's built-in MCP Client Tool.
 
 ## Build & Development Commands
 
@@ -30,10 +29,8 @@ credentials/
 └── CryptoApisApi.credentials.ts    # API key, REST URL, MCP URL
 
 nodes/CryptoApis/
-├── CryptoApis.node.ts              # Main node: 13 resources, router-based execute()
+├── CryptoApis.node.ts              # Main node: 14 resources, router-based execute()
 ├── CryptoApis.node.json            # Codex metadata (categories, resources)
-├── CryptoApisTool.node.ts          # AI tool sub-node: MCP client + supplyData()
-├── CryptoApisTool.node.json        # Codex metadata (AI category)
 ├── cryptoapis.svg                  # Node icon
 ├── actions/
 │   ├── router.ts                   # Dispatches resource → execute function
@@ -60,9 +57,7 @@ nodes/CryptoApis/
 
 **CryptoApis node**: `execute()` → `router.ts` (switch by resource) → `actions/<resource>/execute.ts` → `cryptoApisRequest()` → Crypto APIs REST API → `unwrapResponse()` → `INodeExecutionData[]`
 
-**CryptoApisTool node**: `supplyData()` → `McpHttpClient` connects to MCP server → `listTools()` discovers tools → converts JSON Schema to Zod → returns `DynamicStructuredTool[]` as toolkit
-
-### Action Pattern (13 resources)
+### Action Pattern (14 resources)
 
 Each resource folder has two files:
 
@@ -75,24 +70,14 @@ Each resource folder has two files:
 - **`paginationHelpers.ts`**: `handleOffsetPagination()` and `handleCursorPagination()` — both support `returnAll` flag and configurable limits. Default page size: 50.
 - **`blockchainConstants.ts`**: `BLOCKCHAIN_NETWORKS` mapping, `EVM_BLOCKCHAINS`, `UTXO_BLOCKCHAINS`, `EVM_NETWORK_CHAIN_IDS`, helper functions `blockchainOptions()`, `networkOptions()`, `getChainIdForNetwork()`.
 
-### CryptoApisTool (MCP Client)
-
-Zero external runtime dependencies — uses only `@langchain/core` and `zod` as peerDependencies (provided by n8n at runtime).
-
-Key components inside `CryptoApisTool.node.ts`:
-- **`McpHttpClient`** — Minimal MCP Streamable HTTP client (~100 lines). Implements `initialize()` → `listTools()` → `callTool()` via JSON-RPC over HTTP POST. Handles both JSON and SSE responses. Session managed via `Mcp-Session-Id` header.
-- **`propertyToZod()` / `schemaToZodObject()`** — Converts JSON Schema (from MCP tool definitions) to Zod objects at runtime. Handles object, string, number, boolean, array, enum, required/optional, descriptions.
-- **`supplyData()`** — Connects to the MCP server URL from credentials, discovers tools, converts each to `DynamicStructuredTool`, returns as toolkit for AI Agent nodes.
-
 ## Credentials
 
-`CryptoApisApi` credentials type with three fields:
+`CryptoApisApi` credentials type with two fields:
 
 | Field | Default | Purpose |
 |-------|---------|---------|
 | `apiKey` | _(required)_ | Crypto APIs API key (sent as `x-api-key` header) |
-| `apiUrl` | `https://rest.cryptoapis.io` | REST API base URL (used by CryptoApis node) |
-| `mcpUrl` | `https://mcp.cryptoapis.io/mcp` | MCP server URL (used by CryptoApisTool node) |
+| `apiUrl` | `https://rest.cryptoapis.io` | REST API base URL |
 
 API version `2024-12-12` is sent as `x-api-version` header on all requests.
 
@@ -101,7 +86,7 @@ API version `2024-12-12` is sent as `x-api-version` header on all requests.
 | Element | Case | Example |
 |---------|------|---------|
 | Package name | `@<scope>/n8n-nodes-<name>` | `@cryptoapis-io/n8n-nodes-cryptoapis` |
-| Node class | PascalCase | `CryptoApis`, `CryptoApisTool` |
+| Node class | PascalCase | `CryptoApis` |
 | Node `name` | camelCase | `cryptoApis`, `cryptoApisTool` |
 | Resource values | camelCase | `marketData`, `addressLatest` |
 | Operation values | kebab-case | `get-asset-details-by-id` |
@@ -111,11 +96,10 @@ API version `2024-12-12` is sent as `x-api-version` header on all requests.
 
 ## Key Conventions
 
-- **CommonJS output** — n8n requires CJS. The `@modelcontextprotocol/sdk` is ESM-only, which is why CryptoApisTool implements MCP protocol with raw `fetch()` instead.
+- **CommonJS output** — n8n requires CJS.
 - **peerDependencies** — `@langchain/core` and `zod` are declared as peerDependencies (n8n provides them at runtime) and devDependencies (for compilation).
 - **Zero runtime `dependencies`** — package.json has no `dependencies` field. Everything is either a peerDependency or built-in.
-- **`usableAsTool: true`** — Set on the main CryptoApis node so AI Agent nodes can invoke it directly without needing the separate CryptoApisTool sub-node.
-- **`supplyData()` pattern** — CryptoApisTool implements `INodeType.supplyData()` to output `NodeConnectionTypes.AiTool`. Returns `{ response: { tools, getTools }, closeFunction }`.
+- **`usableAsTool: true`** — Set on the CryptoApis node so AI Agent nodes can invoke it directly.
 - **Body wrapping** — POST/PUT requests to Crypto APIs require body wrapped in `{ data: { item: { ... } } }`. This is handled automatically by `cryptoApisRequest()`.
 - **Response unwrapping** — API responses come wrapped in `{ data: { item: ... } }` or `{ data: { items: [...] } }`. Use `unwrapSingleItem()` or `unwrapItems()`.
 - **displayOptions** — All action fields use `displayOptions.show` to conditionally display based on selected resource and operation.
@@ -130,11 +114,11 @@ API version `2024-12-12` is sent as `x-api-version` header on all requests.
 | `marketData` | get-asset-details-by-id, get-asset-details-by-symbol, list-assets, get-exchange-rate, list-exchange-rates |
 | `addressLatest` | get-balance, list-transactions, list-token-transfers, list-internal-transactions, get-next-nonce (EVM/UTXO/Solana/XRP/Kaspa) |
 | `blockData` | get-block-by-height, get-block-by-hash, list-transactions-by-block, get-last-mined-block (EVM/UTXO/XRP) |
-| `blockchainFees` | get-fee-recommendations, get-eip-1559-fees, estimate-gas (EVM/UTXO/XRP); Tezos estimate-transfer / estimate-fa12-transfer / estimate-fa2-transfer |
+| `blockchainFees` | get-fee-recommendations, get-eip-1559-fees, estimate-gas (EVM/UTXO/XRP); Tezos estimate-transfer / fa12 / fa2; Solana mempool + compute-unit estimates (native / token / program-invocation) |
 | `transactionsData` | get-transaction-details, list-internal-transactions, list-token-transfers, list-logs (EVM/UTXO/Solana/XRP/Kaspa) |
 | `hdWallet` | sync, activate, delete, get-status, get-balance, list-transactions, list-token-transfers (EVM/UTXO/XRP) |
 | `addressHistory` | get-statistics, list-transactions, list-token-transfers, list-internal-transactions (EVM/UTXO) |
-| `prepareTransactions` | prepare-transaction, prepare-token-transfer (EVM incl. Tron via dedicated endpoints); Tezos native-coins / fa1-2-tokens / fa2-tokens. A `blockchainType` selector (evm\|tezos) gates the two field sets; it defaults to `evm` so pre-existing workflows are unaffected. |
+| `prepareTransactions` | EVM (native / ERC-20 / ERC-721, incl. Tron via dedicated endpoints), Tezos (native / FA1.2 / FA2), Solana (native / SPL), XRP (native), Kaspa (native, MAINNET-ONLY), UTXO (native). A `blockchainType` selector gates each field set and defaults to `evm`, so pre-existing workflows are unaffected. Kaspa and UTXO take a multi-output `recipients` array. |
 | `simulate` | simulate-transaction (Ethereum only — the endpoint has no blockchain parameter) |
 | `broadcast` | broadcast-signed-transaction (EVM/UTXO/XRP/Solana/Tezos) |
 | `blockchainEvents` | create-event, list-events, delete-event (webhooks) |
