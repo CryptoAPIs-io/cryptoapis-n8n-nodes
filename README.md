@@ -16,6 +16,14 @@ You need a Crypto APIs API key to use this node. Get one at [app.cryptoapis.io](
 
 The credential supports an optional **API URL** field for users with custom API setups. The default is `https://rest.cryptoapis.io`.
 
+### A note on masked fields
+
+**Token Amount** and **Token ID** fields render as masked inputs (dots instead of characters). They are **not** secrets — they are public on-chain values such as a transfer amount, an ERC-721 NFT index, or a Tezos FA2 token index, and none of them are sensitive.
+
+They are masked because n8n's community-node rules treat any parameter whose *name* contains "token" as a credential, and the rule's exemption list cannot be extended by a package. Renaming the fields would remove the masking, but n8n discards a saved parameter whose name no longer matches the node, which would silently break existing workflows. The rename is planned for the next major version, with a migration note.
+
+If you need to check what you typed, you can widen the field or paste the value into a Set node first.
+
 ## Resources & Operations
 
 ### Address Latest
@@ -106,9 +114,16 @@ You can also use n8n's built-in **MCP Client Tool** node to connect to the hoste
 
 ```bash
 npm install
-npm run build     # Compiles to dist/
-npm run dev       # Watch mode
-npm run lint      # Type check
+npm run build       # Compiles to dist/
+npm run dev         # Watch mode
+npm run lint        # Type check + ESLint (n8n node rules)
+npm run typecheck   # Type check only
+```
+
+To check the package against n8n's own verification gate:
+
+```bash
+npx @n8n/scan-community-package @cryptoapis-io/n8n-nodes-cryptoapis
 ```
 
 ### Local testing
