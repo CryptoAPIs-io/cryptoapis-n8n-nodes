@@ -77,8 +77,7 @@
 		"build": "tsc && gulp build:icons",
 		"dev": "tsc --watch",
 		"lint": "tsc --noEmit",
-		"prepublishOnly": "npm run build",
-		"check-enums": "node scripts/check-enum-drift.mjs"
+		"prepublishOnly": "npm run build"
 	},
 	"files": [
 		"dist"
