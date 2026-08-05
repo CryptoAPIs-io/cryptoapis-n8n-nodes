@@ -79,6 +79,76 @@ export async function executeBlockchainFees(
 		throw new Error(`Unsupported Tezos Blockchain Fees operation: ${operation}`);
 	}
 
+	if (blockchainType === 'solana') {
+		// Also no blockchain segment: /blockchain-fees/solana/{network}/...
+		if (operation === 'getFeeRecommendations') {
+			const response = await cryptoApisRequest.call(this, {
+				resource: 'blockchainFees',
+				method: 'GET',
+				endpoint: `/blockchain-fees/solana/${network}/mempool`,
+			});
+			return [{ json: unwrapSingleItem(response) }];
+		}
+
+		const sender = this.getNodeParameter('solanaSender', index) as string;
+
+		if (operation === 'estimateNativeCoinTransferComputeUnits') {
+			const body: IDataObject = {
+				sender,
+				recipient: this.getNodeParameter('solanaRecipient', index) as string,
+				amount: this.getNodeParameter('solanaAmount', index) as string,
+			};
+			const response = await cryptoApisRequest.call(this, {
+				resource: 'blockchainFees',
+				method: 'POST',
+				endpoint: `/blockchain-fees/solana/${network}/estimate-native-coin-transfer-compute-units`,
+				body,
+			});
+			return [{ json: unwrapSingleItem(response) }];
+		}
+
+		if (operation === 'estimateTokenTransferComputeUnits') {
+			const body: IDataObject = {
+				sender,
+				recipient: this.getNodeParameter('solanaRecipient', index) as string,
+				amount: this.getNodeParameter('solanaAmount', index) as string,
+				contractAddress: this.getNodeParameter('solanaContractAddress', index) as string,
+				tokenStandard: this.getNodeParameter('solanaTokenStandard', index) as string,
+			};
+			const response = await cryptoApisRequest.call(this, {
+				resource: 'blockchainFees',
+				method: 'POST',
+				endpoint: `/blockchain-fees/solana/${network}/estimate-token-transfer-compute-units`,
+				body,
+			});
+			return [{ json: unwrapSingleItem(response) }];
+		}
+
+		if (operation === 'estimateProgramInvocationComputeUnits') {
+			const body: IDataObject = {
+				sender,
+				programId: this.getNodeParameter('solanaProgramId', index) as string,
+				instructionData: this.getNodeParameter('solanaInstructionData', index) as string,
+			};
+			// fixedCollection hands back { account: [ {...}, ... ] }; flatten to the bare
+			// array the API expects, and omit it entirely when the user added no rows.
+			const accountsParam = this.getNodeParameter('solanaAccounts', index, {}) as IDataObject;
+			const accounts = (accountsParam.account as IDataObject[] | undefined) ?? [];
+			if (accounts.length > 0) {
+				body.accounts = accounts;
+			}
+			const response = await cryptoApisRequest.call(this, {
+				resource: 'blockchainFees',
+				method: 'POST',
+				endpoint: `/blockchain-fees/solana/${network}/estimate-program-invocation-compute-units`,
+				body,
+			});
+			return [{ json: unwrapSingleItem(response) }];
+		}
+
+		throw new Error(`Unsupported Solana Blockchain Fees operation: ${operation}`);
+	}
+
 	const blockchain = this.getNodeParameter('blockchain', index) as string;
 
 	if (operation === 'getFeeRecommendations') {

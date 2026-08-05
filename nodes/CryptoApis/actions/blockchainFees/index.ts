@@ -1,5 +1,5 @@
 import type { INodeProperties } from 'n8n-workflow';
-import { blockchainOptions, networkOptions, XRP_NETWORKS, TEZOS_NETWORKS } from '../../transport/blockchainConstants';
+import { blockchainOptions, networkOptions, XRP_NETWORKS, TEZOS_NETWORKS, SOLANA_NETWORKS } from '../../transport/blockchainConstants';
 import {
 	EVM_MEMPOOL_BLOCKCHAINS,
 	EVM_MEMPOOL_NETWORKS,
@@ -26,6 +26,7 @@ export const blockchainFeesOperations: INodeProperties[] = [
 		displayOptions: { show: { resource: ['blockchainFees'] } },
 		options: [
 			{ name: 'EVM', value: 'evm' },
+			{ name: 'Solana', value: 'solana' },
 			{ name: 'Tezos', value: 'tezos' },
 			{ name: 'UTXO', value: 'utxo' },
 			{ name: 'XRP', value: 'xrp' },
@@ -48,6 +49,9 @@ export const blockchainFeesOperations: INodeProperties[] = [
 			{ name: 'Estimate Transfer Fee', value: 'estimateTransferFee', description: 'Estimate the fee for a native XTZ transfer (Tezos only)', action: 'Estimate the fee for a native XTZ transfer' },
 			{ name: 'Estimate FA1.2 Transfer Fee', value: 'estimateFa12TransferFee', description: 'Estimate the fee for an FA1.2 token transfer (Tezos only)', action: 'Estimate the fee for an FA1.2 token transfer' },
 			{ name: 'Estimate FA2 Transfer Fee', value: 'estimateFa2TransferFee', description: 'Estimate the fee for an FA2 token transfer (Tezos only)', action: 'Estimate the fee for an FA2 token transfer' },
+			{ name: 'Estimate Native Coin Transfer Compute Units', value: 'estimateNativeCoinTransferComputeUnits', description: 'Estimate compute units for a native SOL transfer (Solana only)', action: 'Estimate compute units for a native SOL transfer' },
+			{ name: 'Estimate Token Transfer Compute Units', value: 'estimateTokenTransferComputeUnits', description: 'Estimate compute units for an SPL token transfer (Solana only)', action: 'Estimate compute units for an SPL token transfer' },
+			{ name: 'Estimate Program Invocation Compute Units', value: 'estimateProgramInvocationComputeUnits', description: 'Estimate compute units for invoking a Solana program (Solana only)', action: 'Estimate compute units for a program invocation' },
 		],
 		default: 'getFeeRecommendations',
 	},
@@ -303,6 +307,183 @@ export const blockchainFeesFields: INodeProperties[] = [
 				operation: ['estimateTransferFee', 'estimateFa12TransferFee', 'estimateFa2TransferFee'],
 			},
 		},
+	},
+
+	// Network (Solana) — path is /blockchain-fees/solana/{network}/..., no blockchain segment.
+	{
+		displayName: 'Network',
+		name: 'network',
+		type: 'options',
+		required: true,
+		default: 'mainnet',
+		options: networkOptions(SOLANA_NETWORKS),
+		displayOptions: { show: { resource: ['blockchainFees'], blockchainType: ['solana'] } },
+	},
+
+	// --- Solana compute-unit estimate fields ---
+	// Solana prices transactions in COMPUTE UNITS rather than a gas price, so these
+	// return a unit estimate rather than a fee amount.
+	{
+		displayName: 'Sender',
+		name: 'solanaSender',
+		type: 'string',
+		required: true,
+		default: '',
+		description: 'The address sending the funds',
+		displayOptions: {
+			show: {
+				resource: ['blockchainFees'],
+				blockchainType: ['solana'],
+				operation: [
+					'estimateNativeCoinTransferComputeUnits',
+					'estimateTokenTransferComputeUnits',
+					'estimateProgramInvocationComputeUnits',
+				],
+			},
+		},
+	},
+	{
+		displayName: 'Recipient',
+		name: 'solanaRecipient',
+		type: 'string',
+		required: true,
+		default: '',
+		description: 'The address receiving the funds',
+		displayOptions: {
+			show: {
+				resource: ['blockchainFees'],
+				blockchainType: ['solana'],
+				operation: ['estimateNativeCoinTransferComputeUnits', 'estimateTokenTransferComputeUnits'],
+			},
+		},
+	},
+	{
+		displayName: 'Amount',
+		name: 'solanaAmount',
+		type: 'string',
+		required: true,
+		default: '',
+		// The API rejects a decimal here: "Amount must be a non-negative integer string".
+		description: 'Amount in the smallest unit as an integer string — lamports for SOL, base units for SPL tokens. Decimals are rejected.',
+		displayOptions: {
+			show: {
+				resource: ['blockchainFees'],
+				blockchainType: ['solana'],
+				operation: ['estimateNativeCoinTransferComputeUnits', 'estimateTokenTransferComputeUnits'],
+			},
+		},
+	},
+	{
+		displayName: 'Contract Address',
+		name: 'solanaContractAddress',
+		type: 'string',
+		required: true,
+		default: '',
+		description: 'The SPL token mint address',
+		displayOptions: {
+			show: {
+				resource: ['blockchainFees'],
+				blockchainType: ['solana'],
+				operation: ['estimateTokenTransferComputeUnits'],
+			},
+		},
+	},
+	{
+		displayName: 'Token Standard',
+		name: 'solanaTokenStandard',
+		type: 'options',
+		required: true,
+		default: 'TOKEN',
+		description: 'Which SPL token program the mint belongs to — classic TOKEN or TOKEN-2022',
+		options: [
+			{ name: 'TOKEN', value: 'TOKEN' },
+			{ name: 'TOKEN-2022', value: 'TOKEN-2022' },
+		],
+		displayOptions: {
+			show: {
+				resource: ['blockchainFees'],
+				blockchainType: ['solana'],
+				operation: ['estimateTokenTransferComputeUnits'],
+			},
+		},
+	},
+	{
+		displayName: 'Program ID',
+		name: 'solanaProgramId',
+		type: 'string',
+		required: true,
+		default: '',
+		description: 'The address of the Solana program being invoked',
+		displayOptions: {
+			show: {
+				resource: ['blockchainFees'],
+				blockchainType: ['solana'],
+				operation: ['estimateProgramInvocationComputeUnits'],
+			},
+		},
+	},
+	{
+		displayName: 'Instruction Data',
+		name: 'solanaInstructionData',
+		type: 'string',
+		required: true,
+		default: '',
+		description: 'The instruction payload passed to the program, base58/hex encoded as the program expects',
+		displayOptions: {
+			show: {
+				resource: ['blockchainFees'],
+				blockchainType: ['solana'],
+				operation: ['estimateProgramInvocationComputeUnits'],
+			},
+		},
+	},
+	{
+		displayName: 'Accounts',
+		name: 'solanaAccounts',
+		type: 'fixedCollection',
+		typeOptions: { multipleValues: true },
+		required: true,
+		default: {},
+		// Required by the API: omitting it returns missing_required_attributes. Note the
+		// error names the fields snake_case (accounts.is_signer) but the request body
+		// must use camelCase (isSigner) — verified live.
+		description: 'The accounts the instruction touches, in the order the program expects them. At least one is required.',
+		displayOptions: {
+			show: {
+				resource: ['blockchainFees'],
+				blockchainType: ['solana'],
+				operation: ['estimateProgramInvocationComputeUnits'],
+			},
+		},
+		options: [
+			{
+				displayName: 'Account',
+				name: 'account',
+				values: [
+					{
+						displayName: 'Pubkey',
+						name: 'pubkey',
+						type: 'string',
+						default: '',
+						description: 'The account address',
+					},
+					{
+						displayName: 'Is Signer',
+						name: 'isSigner',
+						type: 'boolean',
+						default: false,
+						description: 'Whether this account must sign the transaction',
+					},
+					{
+						displayName: 'Is Writable',
+						name: 'isWritable',
+						type: 'boolean',
+						default: false,
+						description: 'Whether the instruction may modify this account',
+					},
+				],
+			},
+		],
 	},
 
 	// --- EVM Estimate Gas fields ---
