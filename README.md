@@ -26,6 +26,11 @@ If you need to check what you typed, you can widen the field or paste the value 
 
 ## Resources & Operations
 
+### AML
+Anti-money-laundering risk checks. **Verify Address** flags an address associated with fraud, sanctions, ransomware, exploits or darknet markets, returning a risk score, risk band and the flagging sources. **Screen Transaction** screens a transaction across 19 blockchains (EVM, UTXO, XRP, Solana, Tezos, Kaspa, Tron), returning the flagged participants with their roles, scores, severities and categories.
+
+> **These are the two most expensive endpoints in the API** — 200,000 credits per address verification and 500,000 per transaction screening. Put them behind an IF node or a filtered branch rather than calling them on every item in a loop.
+
 ### Address Latest
 Query current balances and recent transactions (last 14 days) across EVM, UTXO, Solana, XRP, and Kaspa blockchains.
 
@@ -35,22 +40,22 @@ Full transaction history for synced addresses. Requires address sync first. Supp
 ### Block Data
 Get block details by height or hash, list transactions within blocks, and retrieve latest mined blocks for EVM, UTXO, and XRP.
 
-### Blockchain Fees
+### Blockchain Fee
 Fee recommendations and gas estimation for EVM (including EIP-1559), UTXO smart fee estimation, XRP fee recommendations, Tezos fee estimates for native XTZ / FA1.2 / FA2 transfers, and Solana compute-unit estimates for native, SPL token, and program-invocation transactions.
 
-### Transactions Data
+### Transaction Data
 Transaction details, internal transactions, token transfers, and event logs across EVM, UTXO, Solana, XRP, and Kaspa.
 
 ### Market Data
 Asset details, exchange rates, and supported asset metadata (crypto and fiat).
 
-### Contracts
+### Contract
 Token details by contract address for EVM (Ethereum, BSC, Ethereum Classic) and Solana.
 
 ### HD Wallet
 HD wallet management (sync, list, activate, delete), address derivation, balance queries, and transaction preparation for EVM, UTXO, and XRP.
 
-### Prepare Transactions
+### Prepare Transaction
 Build unsigned transactions across six chain families: EVM (native coin, ERC-20, ERC-721), Tezos (native XTZ, FA1.2, FA2), Solana (native SOL, SPL tokens), XRP, Kaspa, and UTXO. Kaspa and UTXO support multiple outputs in one transaction.
 
 ### Simulate
@@ -59,10 +64,10 @@ Dry-run Ethereum transactions to preview outcomes without broadcasting.
 ### Broadcast
 Broadcast signed transactions to any supported blockchain network.
 
-### Blockchain Events
+### Blockchain Event
 Create and manage webhook subscriptions for blockchain events (confirmed/unconfirmed transactions, new blocks, etc.).
 
-### Utils
+### Utility
 Address validation, raw transaction decoding, address derivation from xPub, Bitcoin Cash address conversion, and XRP X-Address encode/decode.
 
 ## AI Agent Integration
