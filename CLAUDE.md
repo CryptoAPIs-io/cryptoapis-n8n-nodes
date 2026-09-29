@@ -131,6 +131,12 @@ npm run release
 
 This lints, builds, prompts for the version bump, regenerates `CHANGELOG.md`, commits, tags `vX.Y.Z`, pushes, and creates the GitHub release. Pushing the tag triggers `.github/workflows/publish.yml`, which publishes to npm with provenance via OIDC trusted publishing (there is no `NPM_TOKEN` secret, and there should not be).
 
+GitHub `main` and Bitbucket `master` share one history (see "Git Remotes & Branching" in `.claude/CLAUDE.md`). Before releasing, push `master:main` so the release includes everything merged on Bitbucket. The release commit lands on GitHub only; bring it back to Bitbucket afterwards as a fast-forward (open a PR from it if `master` refuses a direct push):
+
+```bash
+git checkout master && git merge --ff-only github/main && git push origin master vX.Y.Z
+```
+
 Things that will bite:
 
 - **Release from `main`, never `master`.** The CLI passes `--git.requireBranch main`, and release-it pushes to the current branch's upstream — `master` tracks Bitbucket, so releasing from it fails the branch check and would target the wrong host. A `.release-it.json` cannot override this: CLI args win over config.

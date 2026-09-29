@@ -145,20 +145,25 @@ API version `2024-12-12` is sent as `x-api-version` header on all requests.
 
 ## Git Remotes & Branching
 
-This repo has two remotes with separate histories:
+This repo has two remotes that share one history:
 
-- **`origin`** → Bitbucket (`git@bitbucket.org:menadev/cryptoapis-n8n-nodes.git`) — branch `master`, full history
-- **`github`** → GitHub (`git@cryptoapis.github.com:CryptoAPIs-io/cryptoapis-n8n-nodes.git`) — branch `main`, clean orphan history (no Bitbucket history)
+- **`origin`** → Bitbucket (`git@bitbucket.org:menadev/cryptoapis-n8n-nodes.git`) — branch `master`, the working remote; changes land here via PR
+- **`github`** → GitHub (`git@cryptoapis.github.com:CryptoAPIs-io/cryptoapis-n8n-nodes.git`) — branch `main`, public; npm publishes from here
 
-**Workflow for syncing to GitHub:**
-1. Commit and push to Bitbucket: `git push origin master`
-2. Cherry-pick to GitHub (never merge — that leaks Bitbucket history):
-   ```bash
-   git checkout main
-   git cherry-pick <commit-hash>
-   git push github main
-   git checkout master
-   ```
+GitHub `main` used to be a separate orphan history fed by cherry-picks. The two were joined, so
+`master` contains all of GitHub's history and GitHub `main` is a fast-forward mirror of `master`.
+Everything on `master` becomes public when it is pushed — keep secrets and internal-only notes out
+of commits.
+
+**Syncing to GitHub** (after the Bitbucket PR is merged):
+
+```bash
+git checkout master && git pull --ff-only origin master
+git push github master:main        # fast-forward only; never force, never cherry-pick
+```
+
+If GitHub rejects the push as non-fast-forward, a commit landed on GitHub first (e.g. a release —
+see below): fast-forward `master` from `github/main` and push it to Bitbucket, then push again.
 
 **SSH config** uses host alias `cryptoapis.github.com` for the GitHub SSH key.
 
