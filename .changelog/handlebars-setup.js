@@ -44,10 +44,19 @@ module.exports = function setup(Handlebars) {
     const { tag, commits } = getPostTagCommits()
     const section = renderSection(latest.title, latest.href, commits, options.getCommitLink)
 
-    if (!options.latestVersion) {
-      // Release notes (-u, no -p/--latest-version): only the post-tag commits.
+    if (options.unreleased) {
+      // Release notes (-u --unreleased, no -p/--latest-version): only the
+      // post-tag commits.
       process.stdout.write(`${section}\n`)
       process.exit(0)
+    }
+
+    if (!options.latestVersion) {
+      throw new Error(
+        'auto-changelog must be run either with -u/--unreleased (release notes) ' +
+        'or with -p/--latest-version (after:bump, or its --stdout dry run) — ' +
+        'see CLAUDE.md "Release" for the exact supported command forms.'
+      )
     }
 
     // after:bump (-p), or a --latest-version dry run: keep CHANGELOG.md
@@ -60,9 +69,7 @@ module.exports = function setup(Handlebars) {
     if (index === -1) {
       throw new Error(`CHANGELOG.md has no '${heading}' heading to insert above`)
     }
-    const full = commits.length === 0
-      ? existing
-      : `${existing.slice(0, index)}${section}\n\n${existing.slice(index)}`
+    const full = `${existing.slice(0, index)}${section}\n\n${existing.slice(index)}`
 
     if (options.stdout) {
       process.stdout.write(full)

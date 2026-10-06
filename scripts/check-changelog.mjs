@@ -114,6 +114,14 @@ function main() {
   for (const commit of commits) {
     console.log(`  - ${commit.subject} [${commit.hash.slice(0, 7)}]`)
   }
+  if (commits.length === 0) {
+    console.warn(
+      'changelog:check WARNING: no post-tag commits found. This is also the ' +
+      'signature of a branch committed before the latest tag but merged ' +
+      'after it (its commits predate the tag and are dropped by the date ' +
+      'rule) — check for late-merged branches before releasing.'
+    )
+  }
 
   // --- after:bump form: `npx auto-changelog -p`, as a dry run ---
   const nextVersion = nextPatchVersion()
@@ -137,6 +145,10 @@ function main() {
       fail(`after:bump output: content from '${tagHeading}' onwards differs from CHANGELOG.md`)
     } else {
       const section = generated.slice(expectedIntro.length, generated.length - expectedRest.length)
+      const sectionHeadingCount = [...section.matchAll(HEADING_PATTERN)].length
+      if (sectionHeadingCount !== 1) {
+        fail(`after:bump output: expected exactly one "## [" heading in the inserted section, found ${sectionHeadingCount}`)
+      }
       checkNoMergedList('after:bump', section)
       validateBullets('after:bump', section, tag, tagDate, expectedHashes)
     }

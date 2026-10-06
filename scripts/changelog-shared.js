@@ -14,10 +14,10 @@ const TAG_FETCH_HINT =
   "  git fetch https://github.com/CryptoAPIs-io/cryptoapis-n8n-nodes.git 'refs/tags/*:refs/tags/*'"
 
 // Hosting-generated PR merge messages (GitHub "Merge pull request #N from …",
-// GitHub squash "… (#N)", GitHub "Merge … (PR #N)", Bitbucket "Merged in …
-// (pull request #N)"), as opposed to a deliberately authored commit that
-// happens to have two parents (e.g. "chore(FLEET-1178): join GitHub main's
-// history into master"), which is real history and must stay listed.
+// Bitbucket "Merged in … (pull request #N)"), as opposed to a deliberately
+// authored commit that happens to have two parents (e.g. "chore(FLEET-1178):
+// join GitHub main's history into master") or a GitHub squash-merge subject
+// ending in "(#N)", both of which carry real changes and must stay listed.
 const MERGE_SUBJECT_PATTERN = /^Merge\b|^Merged in .+\(pull request #\d+\)/
 
 function git(args) {
