@@ -154,7 +154,10 @@ npm run changelog:check
 ```
 
 `changelog:check` is a dry run — it never writes `CHANGELOG.md`, bumps the
-version, or touches any tag.
+version, or touches any tag. This flow has so far only been verified by dry
+run: the full round-trip on the joined history (release, tag, npm publish,
+GitHub release) is verified on the next functional n8n-nodes release, not by
+a docs-only version.
 
 ## License
 
