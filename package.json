@@ -80,7 +80,8 @@
     "typecheck": "tsc --noEmit",
     "lint:scan": "n8n-node lint",
     "prepublishOnly": "npm run build",
-    "release": "n8n-node release"
+    "release": "n8n-node release",
+    "changelog:check": "node scripts/check-changelog.mjs"
   },
   "files": [
     "dist"
@@ -111,7 +112,8 @@
   },
   "auto-changelog": {
     "output": "CHANGELOG.md",
-    "template": "keepachangelog",
+    "template": ".changelog/template.hbs",
+    "handlebarsSetup": ".changelog/handlebars-setup.js",
     "unreleased": false,
     "commitLimit": false,
     "hideCredit": true,
