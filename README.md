@@ -27,9 +27,11 @@ If you need to check what you typed, you can widen the field or paste the value 
 ## Resources & Operations
 
 ### AML
-Anti-money-laundering risk checks. **Verify Address** flags an address associated with fraud, sanctions, ransomware, exploits or darknet markets, returning a risk score, risk band and the flagging sources. **Screen Transaction** screens a transaction across 19 blockchains (EVM, UTXO, XRP, Solana, Tezos, Kaspa, Tron), returning the flagged participants with their roles, scores, severities and categories.
+Anti-money-laundering risk checks. **Verify Address** flags an address associated with fraud, sanctions, ransomware, exploits or darknet markets, returning a risk score, risk band and the flagging sources. **Screen Transaction** screens a transaction across 19 blockchains (EVM, UTXO, XRP, Solana, Tezos, Kaspa, Tron), returning the flagged participants with their roles, scores, severities and categories. **Get Address Exposure** returns the risky entities (sanctions, darknet markets, ransomware, etc) an address is connected to and the share of funds involved. **List Address Exposure Paths** returns the fund-flow paths that connect an address to those risky entities, with cursor-based pagination (`Limit`, `Starting After`, optional `Root Address`) — it fetches one page per call and does not auto-paginate, so feed the returned `nextStartingAfter` back into a subsequent call yourself.
 
-> **These are the two most expensive endpoints in the API** — 200,000 credits per address verification and 500,000 per transaction screening. Put them behind an IF node or a filtered branch rather than calling them on every item in a loop.
+The two exposure operations support a narrower set of 13 blockchains — ethereum, binance-smart-chain, ethereum-classic, polygon, tron, bitcoin, bitcoin-cash, litecoin, dogecoin, dash, zcash, xrp, solana — since not every chain Screen Transaction covers has an exposure graph.
+
+> **These are among the most expensive endpoints in the API** — 200,000 credits per address verification, 500,000 per transaction screening, 200,000 per address exposure request, and 100,000 per exposure-paths page. Put them behind an IF node or a filtered branch rather than calling them on every item in a loop.
 
 ### Address Latest
 Query current balances and recent transactions (last 14 days) across EVM, UTXO, Solana, XRP, and Kaspa blockchains.
