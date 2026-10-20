@@ -182,6 +182,7 @@ Constraints, each verified the hard way:
 
 - **Release from `main`, not `master`.** The CLI passes `--git.requireBranch main`, and release-it pushes to the current branch's upstream; `master` tracks Bitbucket. `.release-it.json` cannot override it — CLI args win over config.
 - **`release-it` is pinned to `^20`** — release-it 21 rejects the `-n` flag the CLI passes, so `n8n-node release` cannot run against it.
+- **`auto-changelog` is pinned to `~2.6.0`, not `^2.6.0`** — 2.7.0 refuses to run against this repo's in-repo config ("Refusing to run: in-repo config ... sets unsafe options: handlebarsSetup loads code"), since `.changelog/handlebars-setup.js` loads code, which 2.6.x allows and 2.7+ blocks. A caret range would let a regenerated lock resolve 2.7+ and break both `changelog:check` and the release's `npx auto-changelog -p`.
 - **Never publish from a laptop** (`n8n-node release --publish`). Since 1 May 2026 n8n requires Actions-published provenance; a locally published package can never become verified.
 - **npm never allows republishing a version** — a bump is always required.
 - `auto-changelog` link URLs are set explicitly in `package.json`: the `github` remote is an SSH host *alias*, so derived links would point at a non-existent host, and `origin` is Bitbucket, whose links 404 for public readers.
