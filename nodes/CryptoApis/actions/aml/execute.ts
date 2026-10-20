@@ -57,14 +57,15 @@ export async function executeAml(
 			resource: 'aml',
 		});
 
-		const meta = response.meta as IDataObject | undefined;
-		const cursors = meta?.cursors as IDataObject | undefined;
+		// unwrapItems() discards the cursor fields that sit beside `items` in `data`,
+		// so this call site reads `response.data` directly instead.
+		const page = (response.data ?? {}) as IDataObject;
 
 		return [{
 			json: {
 				items: unwrapItems(response),
-				hasMore: cursors?.hasMore ?? false,
-				nextStartingAfter: cursors?.nextStartingAfter ?? null,
+				hasMore: page.hasMore === true,
+				nextStartingAfter: page.nextStartingAfter ?? null,
 			},
 		}];
 	}
